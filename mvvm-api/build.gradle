@@ -1,0 +1,12 @@
+apply plugin: 'java-library'
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+
+compileJava.options.encoding = 'UTF-8'
+
+dependencies {
+    implementation "$libraries.rxjava2"
+    implementation "$libraries.androidx_annotation"
+}
+

@@ -1,0 +1,41 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 28
+
+    defaultConfig {
+        minSdkVersion 19
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+    dataBinding {
+        enabled = true
+    }
+}
+
+dependencies {
+    api project(":mvvm-api")
+
+    implementation "$libraries.androidx_appcompat"
+    implementation "$libraries.rxjava2"
+    implementation "$libraries.rxjava2_android"
+    implementation "$libraries.lifecycle_extensions"
+    implementation "$libraries.lifecycle_common_java8"
+    implementation "$libraries.javax_inject"
+
+    testImplementation "$testLibraries.junit"
+}
