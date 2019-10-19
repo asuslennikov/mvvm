@@ -1,4 +1,4 @@
-# mvvm
+# Android MVVM library [![Build Status](https://travis-ci.org/asuslennikov/mvvm.svg?branch=dev)](https://travis-ci.org/asuslennikov/mvvm)
 It's small architectural library, inspired by Android ViewModel, React state and Clean Architecture. It has not too many code and you easily can grab the main idea of this projects just within 15-30 min.
 
 Reference:
