@@ -1,21 +1,109 @@
 def releaseProperties = new Properties()
 file("release.properties").withInputStream { releaseProperties.load(it) }
-def versionMajor = releaseProperties.getProperty("release.version.major").toInteger()
-def versionMinor = releaseProperties.getProperty("release.version.minor").toInteger()
-def versionPatch = releaseProperties.getProperty("release.version.patch").toInteger()
-def version = "${versionMajor}.${versionMinor}.${versionPatch}"
-def versionTag = "v${version}"
+ext {
+    groupId = 'com.asuslennikov.github'
+    versionMajor = releaseProperties.getProperty("release.version.major").toInteger()
+    versionMinor = releaseProperties.getProperty("release.version.minor").toInteger()
+    versionPatch = releaseProperties.getProperty("release.version.patch").toInteger()
+    currentVersion = "${versionMajor}.${versionMinor}.${versionPatch}"
+    versionTag = "v${currentVersion}"
+}
 
-def isAndroidProject(def propject) {
+static def isAndroidProject(def project) {
     def hasAndroidPlugin = false
-    propject.plugins.each { plugin ->
+    project.plugins.each { plugin ->
         hasAndroidPlugin = hasAndroidPlugin || plugin.class.canonicalName.contains("com.android.build.gradle.LibraryPlugin")
     }
     return hasAndroidPlugin
 }
 
+private static Object getDependenciesNodeFromPom(mavenPom) {
+    def dependenciesNode = mavenPom.asNode().dependencies[0]
+    if (dependenciesNode == null) {
+        dependenciesNode = mavenPom.asNode().appendNode('dependencies')
+    }
+    return dependenciesNode
+}
+
+def fixProjectModuleDependencies(mavenPom) {
+    def dependenciesNode = mavenPom.asNode().dependencies[0]
+    if (dependenciesNode != null) {
+        dependenciesNode.each { dependency ->
+            if (dependency.groupId[0].text() == rootProject.name) {
+                dependency.groupId[0].setValue("$groupId")
+                dependency.version[0].setValue("$currentVersion")
+            }
+        }
+    }
+}
+
+def appendDependenciesNodeToPom(def mavenPom, def project, String dependencyType) {
+    def dependenciesNode = getDependenciesNodeFromPom(mavenPom)
+    project.configurations[dependencyType].allDependencies.each { ModuleDependency dp ->
+        if ('unspecified' == dp.version) {
+            addDependencyToList(dependenciesNode, groupId, dp.name, currentVersion, dp.excludeRules)
+        } else {
+            addDependencyToList(dependenciesNode, dp.group, dp.name, dp.version, dp.excludeRules)
+        }
+    }
+}
+
+private static void addDependencyToList(def dependenciesNode, String group, String artifact, String version, def excludeRules) {
+    def dependencyNode = dependenciesNode.appendNode('dependency')
+    dependencyNode.appendNode('groupId', group)
+    dependencyNode.appendNode('artifactId', artifact)
+    dependencyNode.appendNode('version', version)
+
+    if (excludeRules != null && excludeRules.size() > 0) {
+        def exclusions = dependencyNode.appendNode('exclusions')
+        excludeRules.each { ExcludeRule ex ->
+            def exclusion = exclusions.appendNode('exclusion')
+            exclusion.appendNode('groupId', ex.group)
+            exclusion.appendNode('artifactId', ex.module)
+        }
+    }
+}
+
+
+subprojects {
+    apply plugin: 'com.jfrog.bintray'
+
+    bintray {
+        user = System.getenv('BINTRAY_USER')
+        key = System.getenv('BINTRAY_KEY')
+        publications = ['MVVMModule']
+        publish = true
+        pkg {
+            repo = 'maven'
+            name = 'android-mvvm'
+            userOrg = 'asuslennikov'
+            desc = 'Android ViewModel with "clean architecture" and React states.'
+            websiteUrl = 'https://github.com/asuslennikov/mvvm'
+            issueTrackerUrl = 'https://github.com/asuslennikov/mvvm/issues'
+            vcsUrl = 'https://github.com/asuslennikov/mvvm.git'
+            licenses = ['MIT']
+            githubRepo = 'asuslennikov/mvvm'
+            githubReleaseNotesFile = 'README.md'
+
+            version {
+                name = "$currentVersion"
+                desc = "Android MVVM library, version $currentVersion"
+                released = new Date()
+                vcsTag = "$versionTag"
+
+                gpg {
+                    sign = true
+                    passphrase = System.getenv('BINTRAY_PASSPHRASE')
+                }
+            }
+        }
+    }
+}
+// after evaluated because code based on plugin additions
 gradle.projectsEvaluated {
     rootProject.subprojects { childProject ->
+        apply plugin: 'maven-publish'
+
         task sourcesJar(type: Jar) {
             if (!isAndroidProject(childProject)) {
                 from sourceSets.main.allJava
@@ -27,6 +115,53 @@ gradle.projectsEvaluated {
 
         artifacts {
             archives sourcesJar
+        }
+
+        publishing {
+            publications {
+                MVVMModule(MavenPublication) {
+                    groupId = "$groupId"
+                    artifactId = "$childProject.name"
+                    version = "$currentVersion"
+                    def isAndroidProject = isAndroidProject(childProject)
+                    if (!isAndroidProject) {
+                        from components.java
+                    } else {
+                        artifact bundleReleaseAar
+                    }
+                    artifact sourcesJar
+
+                    pom {
+                        name = "Android MVVM library, module $childProject.name"
+                        description = "$bintray.pkg.desc"
+                        url = "$bintray.pkg.websiteUrl"
+                        licenses {
+                            license {
+                                name = "MIT"
+                                url = 'https://opensource.org/licenses/MIT'
+                            }
+                        }
+                        developers {
+                            developer {
+                                id = 'asuslennikov'
+                                name = 'Anton Suslennikov'
+                                email = 'anton.external@gmail.com'
+                            }
+                        }
+                        scm {
+                            connection = "$bintray.pkg.vcsUrl"
+                            url = "$bintray.pkg.websiteUrl"
+                        }
+                        withXml {
+                            if (isAndroidProject) {
+                                appendDependenciesNodeToPom(it, project, 'implementation')
+                            } else {
+                                fixProjectModuleDependencies(it)
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }
