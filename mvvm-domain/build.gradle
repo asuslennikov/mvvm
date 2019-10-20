@@ -6,7 +6,7 @@ targetCompatibility = JavaVersion.VERSION_1_8
 compileJava.options.encoding = 'UTF-8'
 
 dependencies {
-    implementation project(":mvvm-api")
-    implementation "$libraries.rxjava2"
-    implementation "$libraries.androidx_annotation"
+    api project(":mvvm-api")
+    api "$libraries.rxjava2"
+    api "$libraries.androidx_annotation"
 }
