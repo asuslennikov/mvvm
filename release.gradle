@@ -9,7 +9,7 @@ def versionTag = "v${version}"
 def isAndroidProject(def propject) {
     def hasAndroidPlugin = false
     propject.plugins.each { plugin ->
-        hasAndroidPlugin = hasAndroidPlugin || plugin.class.canonicalName.contains("com.android")
+        hasAndroidPlugin = hasAndroidPlugin || plugin.class.canonicalName.contains("com.android.build.gradle.LibraryPlugin")
     }
     return hasAndroidPlugin
 }
