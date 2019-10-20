@@ -1,4 +1,4 @@
-# Android MVVM library [![Build Status](https://travis-ci.org/asuslennikov/mvvm.svg?branch=master)](https://travis-ci.org/asuslennikov/mvvm)
+# Android MVVM library [![Build Status](https://travis-ci.org/asuslennikov/mvvm.svg?branch=master)](https://travis-ci.org/asuslennikov/mvvm)[![Download](https://api.bintray.com/packages/asuslennikov/maven/android-mvvm/images/download.svg)](https://bintray.com/asuslennikov/maven/android-mvvm/_latestVersion)
 It's small architectural library, inspired by Android ViewModel, React state and Clean Architecture. It has not too many code and you easily can grab the main idea of this projects just within 15-30 min.
 
 Reference:
