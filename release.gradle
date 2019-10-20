@@ -1,7 +1,7 @@
 def releaseProperties = new Properties()
 file("release.properties").withInputStream { releaseProperties.load(it) }
 ext {
-    groupId = 'com.asuslennikov.github'
+    pomGroupId = 'com.github.asuslennikov'
     versionMajor = releaseProperties.getProperty("release.version.major").toInteger()
     versionMinor = releaseProperties.getProperty("release.version.minor").toInteger()
     versionPatch = releaseProperties.getProperty("release.version.patch").toInteger()
@@ -30,7 +30,7 @@ def fixProjectModuleDependencies(mavenPom) {
     if (dependenciesNode != null) {
         dependenciesNode.each { dependency ->
             if (dependency.groupId[0].text() == rootProject.name) {
-                dependency.groupId[0].setValue("$groupId")
+                dependency.groupId[0].setValue("$pomGroupId")
                 dependency.version[0].setValue("$currentVersion")
             }
         }
@@ -41,7 +41,7 @@ def appendDependenciesNodeToPom(def mavenPom, def project, String dependencyType
     def dependenciesNode = getDependenciesNodeFromPom(mavenPom)
     project.configurations[dependencyType].allDependencies.each { ModuleDependency dp ->
         if ('unspecified' == dp.version) {
-            addDependencyToList(dependenciesNode, groupId, dp.name, currentVersion, dp.excludeRules)
+            addDependencyToList(dependenciesNode, pomGroupId, dp.name, currentVersion, dp.excludeRules)
         } else {
             addDependencyToList(dependenciesNode, dp.group, dp.name, dp.version, dp.excludeRules)
         }
@@ -120,7 +120,7 @@ gradle.projectsEvaluated {
         publishing {
             publications {
                 MVVMModule(MavenPublication) {
-                    groupId = "$groupId"
+                    groupId = "$pomGroupId"
                     artifactId = "$childProject.name"
                     version = "$currentVersion"
                     def isAndroidProject = isAndroidProject(childProject)
