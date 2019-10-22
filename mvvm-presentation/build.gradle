@@ -30,8 +30,8 @@ android {
 dependencies {
     api project(":mvvm-api")
 
-    implementation "$libraries.androidx_appcompat"
-    implementation "$libraries.rxjava2"
+    api "$libraries.rxjava2"
+    api "$libraries.androidx_appcompat"
     implementation "$libraries.rxjava2_android"
     implementation "$libraries.lifecycle_extensions"
     implementation "$libraries.lifecycle_common_java8"
