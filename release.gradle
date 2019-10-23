@@ -81,7 +81,7 @@ subprojects {
             websiteUrl = 'https://github.com/asuslennikov/mvvm'
             issueTrackerUrl = 'https://github.com/asuslennikov/mvvm/issues'
             vcsUrl = 'https://github.com/asuslennikov/mvvm.git'
-            licenses = ['MIT']
+            licenses = ['Apache-2.0']
             githubRepo = 'asuslennikov/mvvm'
             githubReleaseNotesFile = 'README.md'
 
@@ -137,14 +137,14 @@ gradle.projectsEvaluated {
                         url = "$bintray.pkg.websiteUrl"
                         licenses {
                             license {
-                                name = "MIT"
-                                url = 'https://opensource.org/licenses/MIT'
+                                name = "Apache-2.0"
+                                url = 'https://www.apache.org/licenses/LICENSE-2.0'
                             }
                         }
                         developers {
                             developer {
                                 id = 'asuslennikov'
-                                name = 'Anton Suslennikov'
+                                name = 'Suslennikov Anton'
                                 email = 'anton.external@gmail.com'
                             }
                         }
