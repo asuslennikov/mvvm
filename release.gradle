@@ -107,6 +107,8 @@ ext {
     versionTag = "v${currentVersion}"
     bintrayUser = System.getenv('BINTRAY_USER')
     bintrayKey = System.getenv('BINTRAY_KEY')
+    ossUser = System.getenv('OSS_USER')
+    ossKey = System.getenv('OSS_KEY')
     signPassphrase = System.getenv('SIGN_PASSPHRASE')
     signPrivateKey = getSignPrivateKey()
 }
@@ -206,6 +208,20 @@ gradle.projectsEvaluated {
                                 fixProjectModuleDependencies(it)
                             }
                         }
+                    }
+                }
+            }
+            repositories {
+                maven {
+                    name = "MavenCentral"
+
+                    def releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+                    def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
+                    url = currentVersion.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+
+                    credentials {
+                        username ossUser
+                        password ossKey
                     }
                 }
             }
