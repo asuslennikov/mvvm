@@ -1,14 +1,3 @@
-def releaseProperties = new Properties()
-file("release.properties").withInputStream { releaseProperties.load(it) }
-ext {
-    pomGroupId = 'com.github.asuslennikov'
-    versionMajor = releaseProperties.getProperty("release.version.major").toInteger()
-    versionMinor = releaseProperties.getProperty("release.version.minor").toInteger()
-    versionPatch = releaseProperties.getProperty("release.version.patch").toInteger()
-    currentVersion = "${versionMajor}.${versionMinor}.${versionPatch}"
-    versionTag = "v${currentVersion}"
-}
-
 static def isAndroidProject(def project) {
     def hasAndroidPlugin = false
     project.plugins.each { plugin ->
@@ -64,13 +53,42 @@ private static void addDependencyToList(def dependenciesNode, String group, Stri
     }
 }
 
+private static String getSignPrivateKey() {
+    def pathInEnvironmentVariables = System.getenv('SIGN_KEY')
+    if (pathInEnvironmentVariables == null || pathInEnvironmentVariables.isEmpty()) {
+        return ""
+    }
 
+    def privateKeyFile = new File(pathInEnvironmentVariables)
+    if (!privateKeyFile.exists()){
+        return ""
+    }
+
+    return new String(Base64.decoder.decode(new String(privateKeyFile.readBytes(), "UTF-8")))
+}
+
+def releaseProperties = new Properties()
+file("release.properties").withInputStream { releaseProperties.load(it) }
+ext {
+    pomGroupId = 'com.github.asuslennikov'
+    versionMajor = releaseProperties.getProperty("release.version.major").toInteger()
+    versionMinor = releaseProperties.getProperty("release.version.minor").toInteger()
+    versionPatch = releaseProperties.getProperty("release.version.patch").toInteger()
+    currentVersion = "${versionMajor}.${versionMinor}.${versionPatch}"
+    versionTag = "v${currentVersion}"
+    bintrayUser = System.getenv('BINTRAY_USER')
+    bintrayKey = System.getenv('BINTRAY_KEY')
+    signPassphrase = System.getenv('SIGN_PASSPHRASE')
+    signPrivateKey = getSignPrivateKey()
+}
+
+// apply immediately because bintray need to setup hooks
 subprojects {
     apply plugin: 'com.jfrog.bintray'
 
     bintray {
-        user = System.getenv('BINTRAY_USER')
-        key = System.getenv('BINTRAY_KEY')
+        user = bintrayUser
+        key = bintrayKey
         publications = ['MVVMModule']
         publish = true
         pkg {
@@ -92,17 +110,17 @@ subprojects {
                 vcsTag = "$versionTag"
 
                 gpg {
-                    sign = true
-                    passphrase = System.getenv('BINTRAY_PASSPHRASE')
+                    sign = false
                 }
             }
         }
     }
 }
-// after evaluated because code based on plugin additions
+// 'projectsEvaluated' because code based on plugin additions
 gradle.projectsEvaluated {
     rootProject.subprojects { childProject ->
         apply plugin: 'maven-publish'
+        apply plugin: 'signing'
 
         task sourcesJar(type: Jar) {
             if (!isAndroidProject(childProject)) {
@@ -162,6 +180,10 @@ gradle.projectsEvaluated {
                     }
                 }
             }
+        }
+        signing {
+            useInMemoryPgpKeys(signPrivateKey, signPassphrase)
+            sign publishing.publications
         }
     }
 }
