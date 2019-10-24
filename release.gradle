@@ -1,3 +1,7 @@
+/**
+ * Method checks does the project has applied 'android-library' plugin or not.
+ * If the plugin was found, this method will return true
+ */
 static def isAndroidProject(def project) {
     def hasAndroidPlugin = false
     project.plugins.each { plugin ->
@@ -6,6 +10,9 @@ static def isAndroidProject(def project) {
     return hasAndroidPlugin
 }
 
+/**
+ * Method traverse through nodes in pom and return the 'dependencies', or creates it, if not found.
+ */
 private static Object getDependenciesNodeFromPom(mavenPom) {
     def dependenciesNode = mavenPom.asNode().dependencies[0]
     if (dependenciesNode == null) {
@@ -14,6 +21,10 @@ private static Object getDependenciesNodeFromPom(mavenPom) {
     return dependenciesNode
 }
 
+/**
+ * Method replaces sub-module dependencies (like this: 'api project(":mvvm-api")') via
+ * correct maven declaration
+ */
 def fixProjectModuleDependencies(mavenPom) {
     def dependenciesNode = mavenPom.asNode().dependencies[0]
     if (dependenciesNode != null) {
@@ -26,6 +37,10 @@ def fixProjectModuleDependencies(mavenPom) {
     }
 }
 
+/**
+ * Method iterates through submodule dependencies and add them to the pom file.
+ * Basically should be applied only to android projects, see {@link #isAndroidProject(java.lang.Object)}
+ */
 def appendDependenciesNodeToPom(def mavenPom, def project, String dependencyType) {
     def dependenciesNode = getDependenciesNodeFromPom(mavenPom)
     project.configurations[dependencyType].allDependencies.each { ModuleDependency dp ->
@@ -37,6 +52,15 @@ def appendDependenciesNodeToPom(def mavenPom, def project, String dependencyType
     }
 }
 
+/**
+ * Method adds a specific dependency with given GAV info and correct exclusion handling.
+ * @param dependenciesNode node in pom file with all dependencies
+ * (see {@link #getDependenciesNodeFromPom(java.lang.Object)})
+ * @param group groupId of dependency
+ * @param artifact artifactId of dependency
+ * @param version version of dependency
+ * @param excludeRules exclusions for dependency
+ */
 private static void addDependencyToList(def dependenciesNode, String group, String artifact, String version, def excludeRules) {
     def dependencyNode = dependenciesNode.appendNode('dependency')
     dependencyNode.appendNode('groupId', group)
@@ -53,6 +77,11 @@ private static void addDependencyToList(def dependenciesNode, String group, Stri
     }
 }
 
+/**
+ * Method provides access to local-stored private PGP key for signing purposes.
+ * We assume that path to that file is stored in environment variable 'SIGN_KEY'.
+ * And content of this file must be in base64 encoding.
+ */
 private static String getSignPrivateKey() {
     def pathInEnvironmentVariables = System.getenv('SIGN_KEY')
     if (pathInEnvironmentVariables == null || pathInEnvironmentVariables.isEmpty()) {
@@ -60,7 +89,7 @@ private static String getSignPrivateKey() {
     }
 
     def privateKeyFile = new File(pathInEnvironmentVariables)
-    if (!privateKeyFile.exists()){
+    if (!privateKeyFile.exists()) {
         return ""
     }
 
