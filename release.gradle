@@ -112,7 +112,7 @@ ext {
     signPassphrase = System.getenv('SIGN_PASSPHRASE')
     signPrivateKey = getSignPrivateKey()
 }
-
+apply plugin: 'io.codearte.nexus-staging'
 // apply immediately because bintray need to setup hooks
 subprojects {
     apply plugin: 'com.jfrog.bintray'
@@ -231,4 +231,11 @@ gradle.projectsEvaluated {
             sign publishing.publications
         }
     }
+}
+nexusStaging {
+    packageGroup = pomGroupId
+    stagingProfileId = "912ea0d90f2f6"
+    delayBetweenRetriesInMillis = 5000
+    username = ossUser
+    password = ossKey
 }
