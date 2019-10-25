@@ -113,8 +113,16 @@ ext {
     signPrivateKey = getSignPrivateKey()
 }
 apply plugin: 'io.codearte.nexus-staging'
+nexusStaging {
+    packageGroup = pomGroupId
+    stagingProfileId = "912ea0d90f2f6"
+    delayBetweenRetriesInMillis = 5000
+    username = ossUser
+    password = ossKey
+}
 // apply immediately because bintray need to setup hooks
 subprojects {
+    apply plugin: "de.marcphilipp.nexus-publish"
     apply plugin: 'com.jfrog.bintray'
 
     bintray {
@@ -146,11 +154,20 @@ subprojects {
             }
         }
     }
+    nexusPublishing {
+        repositories {
+            mavenCentral {
+                nexusUrl = uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
+                snapshotRepositoryUrl = uri("https://oss.sonatype.org/content/repositories/snapshots/")
+                username = ossUser
+                password = ossKey
+            }
+        }
+    }
 }
 // 'projectsEvaluated' because code based on plugin additions
 gradle.projectsEvaluated {
     rootProject.subprojects { childProject ->
-        apply plugin: 'maven-publish'
         apply plugin: 'signing'
 
         task sourcesJar(type: Jar) {
@@ -211,31 +228,10 @@ gradle.projectsEvaluated {
                     }
                 }
             }
-            repositories {
-                maven {
-                    name = "MavenCentral"
-
-                    def releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
-                    def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
-                    url = currentVersion.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
-
-                    credentials {
-                        username ossUser
-                        password ossKey
-                    }
-                }
-            }
         }
         signing {
             useInMemoryPgpKeys(signPrivateKey, signPassphrase)
             sign publishing.publications
         }
     }
-}
-nexusStaging {
-    packageGroup = pomGroupId
-    stagingProfileId = "912ea0d90f2f6"
-    delayBetweenRetriesInMillis = 5000
-    username = ossUser
-    password = ossKey
 }
