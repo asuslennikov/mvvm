@@ -171,16 +171,44 @@ gradle.projectsEvaluated {
         apply plugin: 'signing'
 
         task sourcesJar(type: Jar) {
-            if (!isAndroidProject(childProject)) {
-                from sourceSets.main.allJava
-            } else {
+            if (isAndroidProject(childProject)) {
                 from android.sourceSets.main.java.sourceFiles
+            } else {
+                from sourceSets.main.allJava
             }
             archiveClassifier = 'sources'
         }
 
+        task codedoc(type: Javadoc) {
+            group = "Documentation"
+            description = "Generates Javadoc API documentation for the main source code. Can be used for android library module as well"
+            if (isAndroidProject(childProject)) {
+                source = android.sourceSets.main.java.sourceFiles
+                classpath += files("${android.sdkDirectory}/platforms/${android.compileSdkVersion}/android.jar")
+                android.libraryVariants.all { variant ->
+                    classpath += variant.getJavaCompileProvider().get().classpath
+                }
+                options.linksOffline "https://developer.android.com/reference",
+                        "${android.sdkDirectory}/docs/reference"
+            } else {
+                source = childProject.sourceSets.main.allJava
+                classpath += childProject.sourceSets.main.compileClasspath
+            }
+            options.memberLevel = JavadocMemberLevel.PROTECTED
+            // See http://blog.joda.org/2014/02/turning-off-doclint-in-jdk-8-javadoc.html
+            options.addStringOption('Xdoclint:none', '-quiet')
+            options.links "https://docs.oracle.com/javase/8/docs/api"
+            options.encoding = 'UTF-8'
+        }
+
+        task javadocJar(type: Jar, dependsOn: codedoc) {
+            from codedoc.destinationDir
+            archiveClassifier = 'javadoc'
+        }
+
         artifacts {
             archives sourcesJar
+            archives javadocJar
         }
 
         publishing {
@@ -196,6 +224,7 @@ gradle.projectsEvaluated {
                         artifact bundleReleaseAar
                     }
                     artifact sourcesJar
+                    artifact javadocJar
 
                     pom {
                         name = "Android MVVM library, module $childProject.name"
