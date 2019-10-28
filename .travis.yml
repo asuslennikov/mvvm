@@ -34,4 +34,4 @@ branches:
 script:
   - ./gradlew clean
   - ./gradlew assemble
-  - if [ "$TRAVIS_BRANCH" == "master" ]; then /gradlew generatePomFileForMVVMModulePublication :mvvm-api:bintrayUpload :mvvm-domain:bintrayUpload :mvvm-presentation:bintrayUpload; fi
+  - if [ "$TRAVIS_BRANCH" == "master" ]; then /gradlew publishAllPublicationsToBintrayRepository; fi

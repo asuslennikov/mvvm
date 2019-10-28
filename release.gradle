@@ -120,40 +120,8 @@ nexusStaging {
     username = ossUser
     password = ossKey
 }
-// apply immediately because bintray need to setup hooks
 subprojects {
     apply plugin: "de.marcphilipp.nexus-publish"
-    apply plugin: 'com.jfrog.bintray'
-
-    bintray {
-        user = bintrayUser
-        key = bintrayKey
-        publications = ['MVVMModule']
-        publish = true
-        pkg {
-            repo = 'maven'
-            name = 'android-mvvm'
-            userOrg = 'asuslennikov'
-            desc = 'Android ViewModel with "clean architecture" and React states.'
-            websiteUrl = 'https://github.com/asuslennikov/mvvm'
-            issueTrackerUrl = 'https://github.com/asuslennikov/mvvm/issues'
-            vcsUrl = 'https://github.com/asuslennikov/mvvm.git'
-            licenses = ['Apache-2.0']
-            githubRepo = 'asuslennikov/mvvm'
-            githubReleaseNotesFile = 'README.md'
-
-            version {
-                name = "$currentVersion"
-                desc = "Android MVVM library, version $currentVersion"
-                released = new Date()
-                vcsTag = "$versionTag"
-
-                gpg {
-                    sign = false
-                }
-            }
-        }
-    }
     nexusPublishing {
         repositories {
             mavenCentral {
@@ -228,8 +196,8 @@ gradle.projectsEvaluated {
 
                     pom {
                         name = "Android MVVM library, module $childProject.name"
-                        description = "$bintray.pkg.desc"
-                        url = "$bintray.pkg.websiteUrl"
+                        description = 'Android ViewModel with "clean architecture" and React states.'
+                        url = 'https://github.com/asuslennikov/mvvm'
                         licenses {
                             license {
                                 name = "Apache-2.0"
@@ -244,8 +212,8 @@ gradle.projectsEvaluated {
                             }
                         }
                         scm {
-                            connection = "$bintray.pkg.vcsUrl"
-                            url = "$bintray.pkg.websiteUrl"
+                            connection = 'https://github.com/asuslennikov/mvvm.git'
+                            url = 'https://github.com/asuslennikov/mvvm'
                         }
                         withXml {
                             if (isAndroidProject) {
@@ -254,6 +222,18 @@ gradle.projectsEvaluated {
                                 fixProjectModuleDependencies(it)
                             }
                         }
+                    }
+                }
+            }
+        }
+        publishing {
+            repositories {
+                maven {
+                    name = 'bintray'
+                    url = 'https://api.bintray.com/maven/asuslennikov/maven/android-mvvm/;publish=1'
+                    credentials {
+                        username = bintrayUser
+                        password = bintrayKey
                     }
                 }
             }

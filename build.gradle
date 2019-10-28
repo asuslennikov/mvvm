@@ -13,8 +13,6 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:3.5.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        // plugin allows to deploy in Bintray JCenter repository
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
         // Plugin allows automatically release a staged repository in MavenCentral (without GUI)
         classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.21.1"
         // Plugin protects us from glitches in Maven Central (like creating several staging repos)
