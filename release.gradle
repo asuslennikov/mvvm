@@ -95,16 +95,10 @@ private static void addDependencyToList(def dependenciesNode, String group, Stri
 
 /**
  * Method provides access to local-stored private PGP key for signing purposes.
- * We assume that path to that file is stored in environment variable 'SIGN_KEY'.
- * And content of this file must be in base64 encoding.
+ * We assume that content of this file is in base64 encoding.
  */
 private static String getSignPrivateKey() {
-    def pathInEnvironmentVariables = System.getenv('SIGN_KEY')
-    if (pathInEnvironmentVariables == null || pathInEnvironmentVariables.isEmpty()) {
-        return ""
-    }
-
-    def privateKeyFile = new File(pathInEnvironmentVariables)
+    def privateKeyFile = new File("release.key")
     if (!privateKeyFile.exists()) {
         return ""
     }
