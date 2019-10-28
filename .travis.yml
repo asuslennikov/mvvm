@@ -34,4 +34,5 @@ branches:
 script:
   - ./gradlew clean
   - ./gradlew assemble
-  - if [ "$TRAVIS_BRANCH" == "master" ]; then /gradlew publishAllPublicationsToBintrayRepository; fi
+  - if [ "$TRAVIS_BRANCH" == "master" ]; then ./gradlew publishAllPublicationsToBintrayRepository; fi
+  - if [ "$TRAVIS_BRANCH" == "master" ]; then ./gradlew :mvvm-api:initializeSonatypeStagingRepository :mvvm-domain:initializeSonatypeStagingRepository :mvvm-presentation:initializeSonatypeStagingRepository publishToSonatype closeRepository; fi
