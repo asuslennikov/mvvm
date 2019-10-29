@@ -17,6 +17,9 @@ package com.github.asuslennikov.mvvm.domain;
 
 import com.github.asuslennikov.mvvm.api.domain.UseCaseInput;
 
+/**
+ * If some use case doesn't need an input, they can define this type as an input type.
+ */
 public final class EmptyUseCaseInput implements UseCaseInput {
     private static volatile EmptyUseCaseInput instance;
 
@@ -24,6 +27,12 @@ public final class EmptyUseCaseInput implements UseCaseInput {
         // private constructor
     }
 
+    /**
+     * It provides the instance of use case input which has no fields and it means that use case
+     * actually doesn't need an input.
+     *
+     * @return stub for use case input.
+     */
     public static EmptyUseCaseInput getInstance() {
         EmptyUseCaseInput localInstance = instance;
         if (localInstance == null) {
