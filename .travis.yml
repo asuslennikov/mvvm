@@ -12,6 +12,7 @@ cache:
 
 before_install:
   - chmod +x gradlew
+  - chmod +x release.sh
   - mkdir "$ANDROID_HOME/licenses" || true
   - echo -e "\24333f8a63b6825ea9c5514f83c2829b004d1fee" > "$ANDROID_HOME/licenses/android-sdk-license"
   - echo -e "\84831b9409646a918e30573bab4c9c91346d8abd" > "$ANDROID_HOME/licenses/android-sdk-preview-license"
@@ -34,4 +35,7 @@ branches:
 script:
   - ./gradlew clean
   - ./gradlew assemble
-  - if [ "$TRAVIS_BRANCH" == "master" ]; then /gradlew generatePomFileForMVVMModulePublication :mvvm-api:bintrayUpload :mvvm-domain:bintrayUpload :mvvm-presentation:bintrayUpload; fi
+  - if [ "$TRAVIS_BRANCH" == "master" ]; then ./release.sh; fi
+
+after_script:
+  - rm -f release.key
