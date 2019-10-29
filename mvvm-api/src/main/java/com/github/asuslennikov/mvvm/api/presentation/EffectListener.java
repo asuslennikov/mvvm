@@ -16,22 +16,24 @@
 package com.github.asuslennikov.mvvm.api.presentation;
 
 /**
- * Интерфес слушателя, позволяющий получать информацию о выполнении эффекта: его запуске, завершении.
+ * It is describes contract for effect's execution listener. At least, implementation should receive
+ * notifications about start and stop of effects's execution (see {@link Effect}.
  * <p></p>
- * <b>Не для всех эффектов можно однозначно определить события запуска и завершения.</b>
+ * <b>Not for all effects we can determine the beginning and completion, so you should consider this
+ * API as unstable.</b>
  */
 public interface EffectListener {
     /**
-     * Метод вызывается при старте эффекта.
+     * This method called at the beginning of effect's execution.
      *
-     * @param effect запускаемый эффект
+     * @param effect source of notification
      */
     void effectStarted(Effect effect);
 
     /**
-     * Метод вызывается после завершения эффекта.
+     * This method called right after completion of effect.
      *
-     * @param effect завершенный эффект
+     * @param effect source of notification
      */
     void effectFinished(Effect effect);
 }

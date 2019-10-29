@@ -45,7 +45,7 @@ public interface UseCase<IN extends UseCaseInput, OUT extends UseCaseOutput> {
      * ({@link Observable#toFlowable(BackpressureStrategy)}).
      * <p></p>
      * In most implementations an actual work will be started only when caller subscribes to
-     * observable (return value), see {@link Observable#subscribe(Consumer, Consumer)}
+     * observable (return value), see {@link Observable#subscribe(Consumer, Consumer)}.
      *
      * @param useCaseInput input information for use case
      * @return object for registering a subscriber for work's result (and also intermediate
