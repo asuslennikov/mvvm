@@ -16,18 +16,23 @@
 package com.github.asuslennikov.mvvm.presentation;
 
 import androidx.annotation.Nullable;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.github.asuslennikov.mvvm.api.presentation.ViewModel;
 
 /**
- * Фабрика по созданию и инициализации новых экземпляров {@link ViewModel}
+ * It is contract for creating {@link ViewModel} instances. In fact it's mirroring the
+ * {@link ViewModelProvider.Factory} interface with change in return type. Implementation
+ * shouldn't care about android lifecycle, its main responsibility is to create a new instance.
  */
 public interface ViewModelFactory {
     /**
-     * Создание инстанса viewModel по его классу и его инициализация. Если фабрика не может создать экземпляр для переданного класса, то возвращается {@code null}.
+     * This method creates a new instance of specified class. It takes in account all class dependency.
+     * If this factory can't create an instance of specific type (for example, if it doesn't have
+     * enough dependencies) then it returns {@code null} as a result.
      *
-     * @param viewModelClass
-     * @return проинициализированный экземпляр объекта viewModel, либо {@code null}
+     * @param viewModelClass concrete view model type
+     * @return an initialized instance of view model or {@code null}
      */
     @Nullable
     <VM extends ViewModel<?>> VM create(Class<VM> viewModelClass);

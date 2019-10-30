@@ -24,7 +24,8 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 
 /**
- * Фабрика по созданию объектов {@link ViewModel} с помощью инжекции зависимостей (dagger 2).
+ * It is a factory to create {@link ViewModel} instances via dependency injection
+ * (for example, dagger2)
  */
 public final class InjectableViewModelFactory implements ViewModelFactory {
     private final Map<Class<? extends ViewModel>, Provider<ViewModel>> instances;
