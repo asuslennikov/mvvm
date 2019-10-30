@@ -30,9 +30,9 @@ import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.PublishSubject;
 
 /**
- * Класс инкапсулирует в себе логику публикации состояния и эффектов экрана.
+ * This is base class, which incapsulates logic for publishing screen states and effects.
  *
- * @param <STATE> конкретный тип состояния экрана
+ * @param <STATE> Type which holds information for rendering of screen (see {@link State})
  */
 public abstract class AbstractViewModel<STATE extends State> extends androidx.lifecycle.ViewModel implements ViewModel<STATE> {
     private final BehaviorSubject<STATE> statePublisher;
@@ -45,17 +45,17 @@ public abstract class AbstractViewModel<STATE extends State> extends androidx.li
     }
 
     /**
-     * Метод предоставляет начальное значение состояния экрана ({@link State}).
+     * Method provides an initial value for screen state ({@link State}).
      *
-     * @return начальное состояние экрана
+     * @return an instance of state which represents initial state of screen
      */
     @NonNull
     protected abstract STATE buildInitialState();
 
     /**
-     * Предоставляет доступ к текущему значению состояния экрана.
+     * Method gives access to the current screen state.
      *
-     * @return текущее состояние экрана
+     * @return the current screen state
      */
     @NonNull
     protected final STATE getCurrentState() {
@@ -74,12 +74,14 @@ public abstract class AbstractViewModel<STATE extends State> extends androidx.li
     }
 
     /**
-     * Метод объединяет значения из текущего состояния и сохраненного значения.
-     * Стандартная реализация возвращает {@code savedState} только если {@code currentState} еще не был инициализирован.
+     * Method merges the current state and another state. By default it returns {@code currentState}
+     * if it isn't {@code null}. If it is {@code null}, then it checks the {@code savedState} and
+     * if it isn't {@code null}, returns it or creates an initial state otherwise
+     * ({@link #buildInitialState()})
      *
-     * @param currentState текущее значение (значение из данного {@code ViewModel})
-     * @param savedState   сохраненной значение (внешнее значение)
-     * @return результат объединения двух состояний
+     * @param currentState current value (value from this {@code ViewModel})
+     * @param savedState   external value (for example from screen)
+     * @return result of merge
      */
     @NonNull
     protected STATE mergeState(@Nullable STATE currentState, @Nullable STATE savedState) {
@@ -93,10 +95,10 @@ public abstract class AbstractViewModel<STATE extends State> extends androidx.li
     }
 
     /**
-     * Метод запоминает текущее состояние экрана ({@link State}) и оповещает подписчиков
-     * (как правило {@link Screen}) о его изменении.
+     * Method sends the passed state to subscribers (for example {@link Screen}). It also
+     * saves this states, so it can be accessed via {@link #getCurrentState()}.
      *
-     * @param state новое состояние экрана
+     * @param state new state of screen
      */
     protected final void sendState(@Nullable STATE state) {
         if (state != null) {
@@ -115,10 +117,9 @@ public abstract class AbstractViewModel<STATE extends State> extends androidx.li
     }
 
     /**
-     * Метод оповещает подписчиков (как правило {@link Screen})
-     * о необходимости применить указанный эффект.
+     * Method notifies subscribers that the passed effect should be applied.
      *
-     * @param effect эффект, который необходимо применить к экрану
+     * @param effect an effect to be applied to a screen
      */
     protected final void sendEffect(@Nullable Effect effect) {
         if (effect != null && effectPublisher != null) {
@@ -127,9 +128,10 @@ public abstract class AbstractViewModel<STATE extends State> extends androidx.li
     }
 
     /**
-     * Метод позволяет автоматически очистить disposable при завершении работы данной viewModel.
+     * Method allows automatically cancel a disposable when this view model finishes.
      *
-     * @param disposable объект подписки на событие
+     * @param disposable result of subscription
+     * @return the same disposable
      */
     protected Disposable collectDisposable(Disposable disposable) {
         this.disposable.add(disposable);
