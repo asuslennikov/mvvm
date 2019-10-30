@@ -22,8 +22,8 @@ import com.github.asuslennikov.mvvm.api.domain.UseCase;
 import com.github.asuslennikov.mvvm.api.domain.UseCaseOutput;
 
 /**
- * It is base implementation for use case's result (see {@link UseCase}) and it allows to
- * inform about execution status (see the Loading/Content/Error pattern), and also can store
+ * It is base implementation for use case's output (see {@link UseCase}) and it allows to
+ * inform about execution status (see the Loading/Content/Error pattern), also it can store
  * exception which was thrown during execution.
  */
 public abstract class AbstractUseCaseOutput implements UseCaseOutput {
