@@ -47,7 +47,7 @@ public interface Screen<STATE extends State> {
 
     /**
      * It performs all render actions for specific state. It calculates difference with the
-     * previous state and apply changes to the screen (set text, switch images and so on).
+     * previous state and applies changes to the screen (sets text, switches images and so on).
      * This method should be always called from the {@code main} thread, because there can be
      * operations with view hierarchy ({@link android.view.View}) during this method's execution.
      *
