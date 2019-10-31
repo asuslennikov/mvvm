@@ -1,3 +1,18 @@
+/*
+ * Copyright 2019 Suslennikov Anton
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.github.asuslennikov.mvvm.presentation.di;
 
 import androidx.annotation.NonNull;
@@ -11,19 +26,18 @@ import com.github.asuslennikov.mvvm.presentation.ViewModelProvider;
 import javax.inject.Inject;
 
 /**
- * Данный класс представляет собой фабрику по созданию экземпляров {@link ViewModel}.
- * По своей логике - это простой lookup в таблицу с содержимым класс (ключ) - провайдер (значение).
- * Если в таблице не найдено значение для указанного класса (не найден провайдер), то
- * создание экземпляра производится через конструктор по-умолчанию (конструктор без аргументов).
+ * This class is an implementation of the Factory pattern for {@link ViewModel}. It also a bridge
+ * between AndroidX view models and view models from this library. As a result, we have all advantages
+ * of AndroidX view models out-of-box.
  *
  * @see androidx.lifecycle.ViewModelProvider.NewInstanceFactory
  */
 public final class AndroidXViewModelProvider extends androidx.lifecycle.ViewModelProvider.NewInstanceFactory implements ViewModelProvider {
-    private final ViewModelFactory instanceProvider;
+    private final ViewModelFactory instanceFactory;
 
     @Inject
-    public AndroidXViewModelProvider(ViewModelFactory instanceProvider) {
-        this.instanceProvider = instanceProvider;
+    public AndroidXViewModelProvider(ViewModelFactory instanceFactory) {
+        this.instanceFactory = instanceFactory;
     }
 
     @NonNull
@@ -54,7 +68,7 @@ public final class AndroidXViewModelProvider extends androidx.lifecycle.ViewMode
     @Override
     public <T extends androidx.lifecycle.ViewModel> T create(@NonNull Class<T> androidXModelClass) {
         Class<ViewModel<?>> frameworkViewModelClass = checkAndCastClass(androidXModelClass);
-        ViewModel<?> viewModel = instanceProvider.create(frameworkViewModelClass);
+        ViewModel<?> viewModel = instanceFactory.create(frameworkViewModelClass);
         if (viewModel == null) {
             return super.create(androidXModelClass);
         }

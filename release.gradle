@@ -1,14 +1,23 @@
-def releaseProperties = new Properties()
-file("release.properties").withInputStream { releaseProperties.load(it) }
-ext {
-    pomGroupId = 'com.github.asuslennikov'
-    versionMajor = releaseProperties.getProperty("release.version.major").toInteger()
-    versionMinor = releaseProperties.getProperty("release.version.minor").toInteger()
-    versionPatch = releaseProperties.getProperty("release.version.patch").toInteger()
-    currentVersion = "${versionMajor}.${versionMinor}.${versionPatch}"
-    versionTag = "v${currentVersion}"
-}
+/*
+ * Copyright 2019 Suslennikov Anton
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
+/**
+ * Method checks does the project has applied 'android-library' plugin or not.
+ * If the plugin was found, this method will return true
+ */
 static def isAndroidProject(def project) {
     def hasAndroidPlugin = false
     project.plugins.each { plugin ->
@@ -17,6 +26,9 @@ static def isAndroidProject(def project) {
     return hasAndroidPlugin
 }
 
+/**
+ * Method traverse through nodes in pom and return the 'dependencies', or creates it, if not found.
+ */
 private static Object getDependenciesNodeFromPom(mavenPom) {
     def dependenciesNode = mavenPom.asNode().dependencies[0]
     if (dependenciesNode == null) {
@@ -25,6 +37,10 @@ private static Object getDependenciesNodeFromPom(mavenPom) {
     return dependenciesNode
 }
 
+/**
+ * Method replaces sub-module dependencies (like this: 'api project(":mvvm-api")') via
+ * correct maven declaration
+ */
 def fixProjectModuleDependencies(mavenPom) {
     def dependenciesNode = mavenPom.asNode().dependencies[0]
     if (dependenciesNode != null) {
@@ -37,6 +53,10 @@ def fixProjectModuleDependencies(mavenPom) {
     }
 }
 
+/**
+ * Method iterates through submodule dependencies and add them to the pom file.
+ * Basically should be applied only to android projects, see {@link #isAndroidProject(java.lang.Object)}
+ */
 def appendDependenciesNodeToPom(def mavenPom, def project, String dependencyType) {
     def dependenciesNode = getDependenciesNodeFromPom(mavenPom)
     project.configurations[dependencyType].allDependencies.each { ModuleDependency dp ->
@@ -48,6 +68,15 @@ def appendDependenciesNodeToPom(def mavenPom, def project, String dependencyType
     }
 }
 
+/**
+ * Method adds a specific dependency with given GAV info and correct exclusion handling.
+ * @param dependenciesNode node in pom file with all dependencies
+ * (see {@link #getDependenciesNodeFromPom(java.lang.Object)})
+ * @param group groupId of dependency
+ * @param artifact artifactId of dependency
+ * @param version version of dependency
+ * @param excludeRules exclusions for dependency
+ */
 private static void addDependencyToList(def dependenciesNode, String group, String artifact, String version, def excludeRules) {
     def dependencyNode = dependenciesNode.appendNode('dependency')
     dependencyNode.appendNode('groupId', group)
@@ -64,57 +93,95 @@ private static void addDependencyToList(def dependenciesNode, String group, Stri
     }
 }
 
+/**
+ * Method provides access to local-stored private PGP key for signing purposes.
+ * We assume that content of this file is in base64 encoding.
+ */
+private static String getSignPrivateKey() {
+    def privateKeyFile = new File("release.key")
+    if (!privateKeyFile.exists()) {
+        return ""
+    }
 
+    return new String(Base64.decoder.decode(new String(privateKeyFile.readBytes(), "UTF-8")))
+}
+
+def releaseProperties = new Properties()
+file("release.properties").withInputStream { releaseProperties.load(it) }
+ext {
+    pomGroupId = 'com.github.asuslennikov'
+    versionMajor = releaseProperties.getProperty("release.version.major").toInteger()
+    versionMinor = releaseProperties.getProperty("release.version.minor").toInteger()
+    versionPatch = releaseProperties.getProperty("release.version.patch").toInteger()
+    currentVersion = "${versionMajor}.${versionMinor}.${versionPatch}"
+    versionTag = "v${currentVersion}"
+    bintrayUser = System.getenv('BINTRAY_USER')
+    bintrayKey = System.getenv('BINTRAY_KEY')
+    ossUser = System.getenv('OSS_USER')
+    ossKey = System.getenv('OSS_KEY')
+    signPassphrase = System.getenv('SIGN_PASSPHRASE')
+    signPrivateKey = getSignPrivateKey()
+}
+apply plugin: 'io.codearte.nexus-staging'
+nexusStaging {
+    packageGroup = pomGroupId
+    stagingProfileId = "912ea0d90f2f6"
+    delayBetweenRetriesInMillis = 5000
+    username = ossUser
+    password = ossKey
+}
 subprojects {
-    apply plugin: 'com.jfrog.bintray'
-
-    bintray {
-        user = System.getenv('BINTRAY_USER')
-        key = System.getenv('BINTRAY_KEY')
-        publications = ['MVVMModule']
-        publish = true
-        pkg {
-            repo = 'maven'
-            name = 'android-mvvm'
-            userOrg = 'asuslennikov'
-            desc = 'Android ViewModel with "clean architecture" and React states.'
-            websiteUrl = 'https://github.com/asuslennikov/mvvm'
-            issueTrackerUrl = 'https://github.com/asuslennikov/mvvm/issues'
-            vcsUrl = 'https://github.com/asuslennikov/mvvm.git'
-            licenses = ['MIT']
-            githubRepo = 'asuslennikov/mvvm'
-            githubReleaseNotesFile = 'README.md'
-
-            version {
-                name = "$currentVersion"
-                desc = "Android MVVM library, version $currentVersion"
-                released = new Date()
-                vcsTag = "$versionTag"
-
-                gpg {
-                    sign = true
-                    passphrase = System.getenv('BINTRAY_PASSPHRASE')
-                }
-            }
+    apply plugin: "de.marcphilipp.nexus-publish"
+    nexusPublishing {
+        repositories {
+            sonatype()
         }
     }
 }
-// after evaluated because code based on plugin additions
+// 'projectsEvaluated' because code based on plugin additions
 gradle.projectsEvaluated {
     rootProject.subprojects { childProject ->
-        apply plugin: 'maven-publish'
+        apply plugin: 'signing'
 
         task sourcesJar(type: Jar) {
-            if (!isAndroidProject(childProject)) {
-                from sourceSets.main.allJava
-            } else {
+            if (isAndroidProject(childProject)) {
                 from android.sourceSets.main.java.sourceFiles
+            } else {
+                from sourceSets.main.allJava
             }
             archiveClassifier = 'sources'
         }
 
+        task codedoc(type: Javadoc) {
+            group = "Documentation"
+            description = "Generates Javadoc API documentation for the main source code. Can be used for android library module as well"
+            if (isAndroidProject(childProject)) {
+                source = android.sourceSets.main.java.sourceFiles
+                classpath += files("${android.sdkDirectory}/platforms/${android.compileSdkVersion}/android.jar")
+                android.libraryVariants.all { variant ->
+                    classpath += variant.getJavaCompileProvider().get().classpath
+                }
+                options.linksOffline "https://developer.android.com/reference",
+                        "${android.sdkDirectory}/docs/reference"
+            } else {
+                source = childProject.sourceSets.main.allJava
+                classpath += childProject.sourceSets.main.compileClasspath
+            }
+            options.memberLevel = JavadocMemberLevel.PROTECTED
+            // See http://blog.joda.org/2014/02/turning-off-doclint-in-jdk-8-javadoc.html
+            options.addStringOption('Xdoclint:none', '-quiet')
+            options.links "https://docs.oracle.com/javase/8/docs/api"
+            options.encoding = 'UTF-8'
+        }
+
+        task javadocJar(type: Jar, dependsOn: codedoc) {
+            from codedoc.destinationDir
+            archiveClassifier = 'javadoc'
+        }
+
         artifacts {
             archives sourcesJar
+            archives javadocJar
         }
 
         publishing {
@@ -130,27 +197,28 @@ gradle.projectsEvaluated {
                         artifact bundleReleaseAar
                     }
                     artifact sourcesJar
+                    artifact javadocJar
 
                     pom {
                         name = "Android MVVM library, module $childProject.name"
-                        description = "$bintray.pkg.desc"
-                        url = "$bintray.pkg.websiteUrl"
+                        description = 'Android ViewModel with "clean architecture" and React states.'
+                        url = 'https://github.com/asuslennikov/mvvm'
                         licenses {
                             license {
-                                name = "MIT"
-                                url = 'https://opensource.org/licenses/MIT'
+                                name = "Apache-2.0"
+                                url = 'https://www.apache.org/licenses/LICENSE-2.0'
                             }
                         }
                         developers {
                             developer {
                                 id = 'asuslennikov'
-                                name = 'Anton Suslennikov'
+                                name = 'Suslennikov Anton'
                                 email = 'anton.external@gmail.com'
                             }
                         }
                         scm {
-                            connection = "$bintray.pkg.vcsUrl"
-                            url = "$bintray.pkg.websiteUrl"
+                            connection = 'https://github.com/asuslennikov/mvvm.git'
+                            url = 'https://github.com/asuslennikov/mvvm'
                         }
                         withXml {
                             if (isAndroidProject) {
@@ -162,6 +230,22 @@ gradle.projectsEvaluated {
                     }
                 }
             }
+        }
+        publishing {
+            repositories {
+                maven {
+                    name = 'bintray'
+                    url = 'https://api.bintray.com/maven/asuslennikov/maven/android-mvvm/;publish=1'
+                    credentials {
+                        username = bintrayUser
+                        password = bintrayKey
+                    }
+                }
+            }
+        }
+        signing {
+            useInMemoryPgpKeys(signPrivateKey, signPassphrase)
+            sign publishing.publications
         }
     }
 }

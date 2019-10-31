@@ -1,29 +1,43 @@
+/*
+ * Copyright 2019 Suslennikov Anton
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package com.github.asuslennikov.mvvm.api.domain;
 
 import com.github.asuslennikov.mvvm.api.presentation.State;
 
 /**
- * Маркерный интерфейс, описывающий результат работы бизнес-сценария.
+ * It is marker interface for result of work done by use case ({@link UseCase}).
  * <p></p>
- * <b>Зона ответственности:</b> Представление результатов работы сценария {@link UseCase}.
- * <p></p>
- * Реализация не должна одновременно имплементимровать интерфейс {@link State}.
+ * In most cases, an implementation is just a POJO object. It's good idea to make it immutable (so
+ * only getters and builder / constructor with all fields). Any implementation of this interface
+ * should never implement the {@link State} interface at the same time, so it never will be
+ * used as a screen state.
  */
 public interface UseCaseOutput {
     /**
-     * Перечисление возможных состояний сценария бизенс-логики {@link UseCase}
+     * Enumeration of possible states for current use case's execution.
      */
     enum Status {
         /**
-         * Сценарий выполняется в текущий момент
+         * Use case is in progress (work in progress)
          */
         IN_PROGRESS,
         /**
-         * Сценарий успешно выполнен
+         * Use case was successfully completed
          */
         SUCCESS,
         /**
-         * Сценарий завершился с ошибкой
+         * Use case failed to complete its work
          */
         FAILURE
     }

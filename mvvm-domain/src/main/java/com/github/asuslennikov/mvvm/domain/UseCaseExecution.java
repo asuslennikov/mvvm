@@ -1,3 +1,18 @@
+/*
+ * Copyright 2019 Suslennikov Anton
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.github.asuslennikov.mvvm.domain;
 
 import androidx.annotation.NonNull;
@@ -13,9 +28,9 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 
 /**
- * Класс осуществляющий взаимодействие между подписчиком и конкретным запуском сценария.
+ * Class defines contract for communication between current use case execution and subscribers.
  *
- * @param <OUT> тип результата работы (наследник {@link AbstractUseCaseOutput})
+ * @param <OUT> result of use case's work (successor of {@link AbstractUseCaseOutput})
  */
 public final class UseCaseExecution<OUT extends AbstractUseCaseOutput> {
     private final AbstractUseCase<?, OUT> useCase;
@@ -32,9 +47,9 @@ public final class UseCaseExecution<OUT extends AbstractUseCaseOutput> {
     }
 
     /**
-     * Метод оповещает слушателей о результате работы сценария в том виде, как он был передан
+     * Method sends notification for subscribers.
      *
-     * @param useCaseOutput результат работы
+     * @param useCaseOutput current state of work
      */
     private void notify(@NonNull OUT useCaseOutput) {
         if (!isCancelled()) {
@@ -43,8 +58,9 @@ public final class UseCaseExecution<OUT extends AbstractUseCaseOutput> {
     }
 
     /**
-     * Метод оповещает слушателей о выполнении сценария
-     * (устанавливает статус {@link UseCaseOutput.Status#IN_PROGRESS}).
+     * Method sends notification for subscribers about start of execution.
+     * (In fact it set the {@link UseCaseOutput.Status#IN_PROGRESS} status for output, received
+     * via {@link AbstractUseCase#getUseCaseOutput()}).
      */
     public void notifyProgress() {
         OUT useCaseOutput = getUseCaseOutput();
@@ -52,10 +68,11 @@ public final class UseCaseExecution<OUT extends AbstractUseCaseOutput> {
     }
 
     /**
-     * Метод оповещает слушателей о выполнении сценария
-     * (устанавливает статус {@link UseCaseOutput.Status#IN_PROGRESS}).
+     * Method sends notification for subscribers about start of execution.
+     * (In fact it set the {@link UseCaseOutput.Status#IN_PROGRESS} status for output, received
+     * as argument).
      *
-     * @param useCaseOutput предзаполненный результат выполнения сценария
+     * @param useCaseOutput pre-filled output instance
      */
     public void notifyProgress(@NonNull OUT useCaseOutput) {
         useCaseOutput.setStatus(UseCaseOutput.Status.IN_PROGRESS);
@@ -63,8 +80,9 @@ public final class UseCaseExecution<OUT extends AbstractUseCaseOutput> {
     }
 
     /**
-     * Метод оповещает слушателей об успешном завершении работы сценария
-     * (устанавливает статус {@link UseCaseOutput.Status#SUCCESS}).
+     * Method sends notification for subscribers about completion of execution.
+     * (In fact it set the {@link UseCaseOutput.Status#SUCCESS} status for output, received
+     * via {@link AbstractUseCase#getUseCaseOutput()}).
      */
     public void notifySuccess() {
         OUT useCaseOutput = getUseCaseOutput();
@@ -72,10 +90,11 @@ public final class UseCaseExecution<OUT extends AbstractUseCaseOutput> {
     }
 
     /**
-     * Метод оповещает слушателей об успешном завершении работы сценария
-     * (устанавливает статус {@link UseCaseOutput.Status#SUCCESS}).
+     * Method sends notification for subscribers about completion of execution.
+     * (In fact it set the {@link UseCaseOutput.Status#SUCCESS} status for output, received
+     * as argument).
      *
-     * @param useCaseOutput предзаполненный результат выполнения сценария
+     * @param useCaseOutput pre-filled output instance
      */
     public void notifySuccess(@NonNull OUT useCaseOutput) {
         useCaseOutput.setStatus(UseCaseOutput.Status.SUCCESS);
@@ -83,8 +102,9 @@ public final class UseCaseExecution<OUT extends AbstractUseCaseOutput> {
     }
 
     /**
-     * Метод оповещает слушателей об ошибочном завершении работы сценария
-     * (устанавливает статус {@link UseCaseOutput.Status#FAILURE}).
+     * Method sends notification for subscribers about failure of execution.
+     * (In fact it set the {@link UseCaseOutput.Status#FAILURE} status for output, received
+     * via {@link AbstractUseCase#getUseCaseOutput()}).
      */
     public void notifyFailure() {
         OUT useCaseOutput = getUseCaseOutput();
@@ -93,10 +113,11 @@ public final class UseCaseExecution<OUT extends AbstractUseCaseOutput> {
     }
 
     /**
-     * Метод оповещает слушателей об ошибочном завершении работы сценария
-     * (устанавливает статус {@link UseCaseOutput.Status#FAILURE}).
+     * Method sends notification for subscribers about failure of execution.
+     * (In fact it set the {@link UseCaseOutput.Status#FAILURE} status for output, received
+     * as argument).
      *
-     * @param useCaseOutput предзаполненный результат выполнения сценария
+     * @param useCaseOutput pre-filled output instance
      */
     public void notifyFailure(@NonNull OUT useCaseOutput) {
         useCaseOutput.setStatus(UseCaseOutput.Status.FAILURE);
@@ -104,11 +125,11 @@ public final class UseCaseExecution<OUT extends AbstractUseCaseOutput> {
     }
 
     /**
-     * Метод оповещает слушателей об ошибочном завершении работы сценария
-     * (устанавливает статус {@link UseCaseOutput.Status#FAILURE})
-     * и указывает на конкретную ошибку.
+     * Method sends notification for subscribers about failure of execution.
+     * (In fact it set the {@link UseCaseOutput.Status#FAILURE} status for output, received
+     * via {@link AbstractUseCase#getUseCaseOutput()} and populate it with the given exception).
      *
-     * @param ex произошедшая ошибка
+     * @param ex exception, which was thrown during execution
      */
     public void notifyFailure(@NonNull Throwable ex) {
         OUT useCaseOutput = getUseCaseOutput();
@@ -118,10 +139,11 @@ public final class UseCaseExecution<OUT extends AbstractUseCaseOutput> {
     }
 
     /**
-     * Метод позволяет узнать, необходимо ли выполнять задачу. Может применяться для затратных по
-     * времени операций, когда получатель результата уже может в нем не нуждаться.
+     * Method allows to check the current execution cancellation status. Can be helpful if your
+     * use case does a lot of work and you don't want to do unnecessary work if there is no
+     * subscribers.
      *
-     * @return {@code true} если результат работы не будет никем получен
+     * @return {@code true} if there is no subscribers for current execution
      */
     public boolean isCancelled() {
         return emitter.isDisposed();
@@ -139,7 +161,7 @@ public final class UseCaseExecution<OUT extends AbstractUseCaseOutput> {
     }
 
     /**
-     * Завершает все связанные задачи (если есть) для текущего выполнения сценария.
+     * Terminates all child tasks for current execution.
      */
     void terminateJoinedTasks() {
         if (disposables != null && !disposables.isEmpty()) {
@@ -150,13 +172,13 @@ public final class UseCaseExecution<OUT extends AbstractUseCaseOutput> {
     }
 
     /**
-     * Метод позволяет текущему запуску сценария дождаться завершения указанной задачи.
+     * Method postpones completion of current execution until the
+     * {@link #completeExecution(boolean)} is called.
      *
-     * @param uniqueTaskName уникальный идентификатор задачи. В случае, если для данного выполнения сценария
-     *                       уже зарегистрирована задача с таким идентификатором, будет выбрашено исключени
-     *                       {@link IllegalArgumentException}.
-     * @param disposable     внутренняя задача, завершения которой необходимо дождаться данному запуску сценария
-     * @return переданная задача, на случай, если необходимо сохранить ссылку внутри сценария
+     * @param uniqueTaskName a unique task id. If this execution already has active task with given
+     *                       id, the {@link IllegalArgumentException} will be thrown
+     * @param disposable     result of subscription to child task
+     * @return the same {@code disposable}, which was passed as argument
      */
     @NonNull
     public Disposable joinTask(@NonNull String uniqueTaskName, @NonNull Disposable disposable) {
@@ -173,10 +195,10 @@ public final class UseCaseExecution<OUT extends AbstractUseCaseOutput> {
     }
 
     /**
-     * Метод заверщает выполнение связанной задачи.
+     * Method terminates a child task, associated with given id.
      *
-     * @param uniqueTaskName уникальный идентификатор задачи.
-     * @return {@code true} если связанная задача с таким идентификатором была найде выполняющейся и остановлена.
+     * @param uniqueTaskName a unique task id.
+     * @return {@code true} if there was a running task with specified id.
      */
     public boolean cancelTask(@NonNull String uniqueTaskName) {
         Disposable disposable = disposables.get(uniqueTaskName);
@@ -184,17 +206,17 @@ public final class UseCaseExecution<OUT extends AbstractUseCaseOutput> {
             return false;
         }
         disposable.dispose();
-        // Может оказаться, что это была последняя связанная заадча, токда нужно завершить выполнение сценария
+        // if it was the last child task, we should complete the execution (of use case)
         completeExecution(false);
         return true;
     }
 
     /**
-     * Метод возвращает обработчик ошибок для {@link Observable}, который в случае срабатывания отправляет подписчику
-     * текущего выполнения сценария уведомление об ошибке. После этого, выполнение сценария и всех зависимых задач
-     * ({@link #joinTask(String, Disposable)}) завершается.
+     * Method provides an error handler for {@link Observable}, which, if triggered, terminates
+     * the current execution (and all child tasks {@link #joinTask(String, Disposable)}).
+     * Subscribers will be automatically notified about failure.
      *
-     * @return обработчик ошибок в потоке ({@link Observable})
+     * @return error handler
      */
     public Consumer<Throwable> notifyFailureOnError() {
         return throwable -> {
@@ -204,10 +226,12 @@ public final class UseCaseExecution<OUT extends AbstractUseCaseOutput> {
     }
 
     /**
-     * Метод позволяет в подать сигнал о завершении работы текущего запуска сценария. После этого подписчику
-     * выполнения данного сценария никакие сообщения не будут доставлены.
+     * Method terminates the current execution, if there is no child tasks or
+     * {@code terminateJoinedTasks} is true. After that, no notification will be delivered
+     * to subscribers.
      *
-     * @param terminateJoinedTasks определяет нужно ли завершить ожидаемые задачи
+     * @param terminateJoinedTasks {@code true} if we want complete execution, even if there
+     *                             is active child tasks
      */
     public void completeExecution(boolean terminateJoinedTasks) {
         if (!isCancelled() && (!hasJoinedTasks() || terminateJoinedTasks)) {
