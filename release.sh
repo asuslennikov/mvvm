@@ -1,8 +1,8 @@
 # Encrypt private sign key
-#openssl aes-256-cbc -salt -k "$SIGN_KEY" -in release.key -out release.enc
+#openssl aes-256-cbc -salt -k "$SIGN_KEY" -md sha256 -in release.key -out release.enc
 # Decrypt private sign key
 rm -f release.key &&
-openssl aes-256-cbc -k "$SIGN_KEY" -in release.enc -out release.key -d &&
+openssl aes-256-cbc -k "$SIGN_KEY" -md sha256 -in release.enc -out release.key -d &&
 # Publish to Bintray
 ./gradlew publishAllPublicationsToBintrayRepository &&
 # Publish to MavenCentral
