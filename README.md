@@ -8,3 +8,48 @@ Reference:
 - Android ViewModel: https://developer.android.com/topic/libraries/architecture/viewmodel
 - React State: https://www.w3schools.com/react/react_state.asp
 - Clean Architecture by Uncle Bob: https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html
+
+## Usage
+Artifacts are published in JCenter and Maven Central repository. Make sure that one of them is listed
+in the `repository` section of `build.gradle` file in your root project folder:
+```groovy
+buildscript {
+    repositories {
+        jcenter()
+    }
+}
+```
+or
+```groovy
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+}
+```
+##### A single module project
+If you have just a single module, then in `build.gradle` file of this module add these dependencies:
+```groovy
+dependencies {
+    implementation "com.github.asuslennikov:mvvm-domain:x.y.z"
+    implementation "com.github.asuslennikov:mvvm-presentation:x.y.z"
+}
+```
+Please replace the 'x.y.z' by the latest available version (check the JCenter badge at the top of file).
+
+##### A multi-module project
+if you follow the clean architecture guideline and have separate modules 
+for your business rules (a `domain` module) and presentation (a `presentation` module), then:
+- in your `domain` module add this dependency in `build.gradle` file:
+    ```groovy
+    dependencies {
+        api "com.github.asuslennikov:mvvm-domain:x.y.z"
+    }
+    ```
+- and in `presentation` module:
+    ```groovy
+    dependencies {
+        implementation "com.github.asuslennikov:mvvm-presentation:x.y.z"
+    }
+    ```
+Please replace the 'x.y.z' by the latest available version (check the JCenter badge at the top of file).
