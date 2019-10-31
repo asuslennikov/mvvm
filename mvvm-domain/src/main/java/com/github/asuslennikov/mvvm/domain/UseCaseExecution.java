@@ -206,7 +206,7 @@ public final class UseCaseExecution<OUT extends AbstractUseCaseOutput> {
             return false;
         }
         disposable.dispose();
-        // Может оказаться, что это была последняя связанная заадча, токда нужно завершить выполнение сценария
+        // if it was the last child task, we should complete the execution (of use case)
         completeExecution(false);
         return true;
     }
