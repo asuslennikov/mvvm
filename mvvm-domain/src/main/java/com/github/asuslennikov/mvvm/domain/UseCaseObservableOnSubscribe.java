@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2019 Suslennikov Anton
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -44,7 +44,7 @@ final class UseCaseObservableOnSubscribe<IN extends UseCaseInput,
     }
 
     /**
-     * Необходимо завершать все дочерние задачи (если они есть) для текущего выполнения сценария, если он был отменен
+     * We need to terminate all child tasks (if any) for current execution, if it's cancelled.
      */
     void onObservableDisposed() {
         if (execution != null) {
@@ -53,7 +53,7 @@ final class UseCaseObservableOnSubscribe<IN extends UseCaseInput,
     }
 
     /**
-     * Необходимо завершать все дочерние задачи (если они есть) для текущего выполнения сценария, если он был отменен
+     * We need to terminate all child tasks (if any) for current execution, if it's cancelled.
      */
     void onObservableError(Throwable ignored) {
         if (execution != null) {

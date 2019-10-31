@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2019 Suslennikov Anton
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,34 +22,36 @@ import com.github.asuslennikov.mvvm.api.domain.UseCase;
 import com.github.asuslennikov.mvvm.api.domain.UseCaseOutput;
 
 /**
- * Базовая реализация представления результатов работы {@link UseCase}, позволяющая оперировать статусом и запоминать возможные ошибки, произошедшие в сценарии.
+ * It is base implementation for use case's output (see {@link UseCase}) and it allows to
+ * inform about execution status (see the Loading/Content/Error pattern), also it can store
+ * exception which was thrown during execution.
  */
 public abstract class AbstractUseCaseOutput implements UseCaseOutput {
     private Throwable exception;
     private Status status = Status.SUCCESS;
 
     /**
-     * Метод сохраняет ошибку, произошедшую в сценарии бизнес-логики.
+     * Setter for exception which was thrown during execution.
      *
-     * @param exception произошедшая ошибка
+     * @param exception exact exception which was thrown during execution. Can be {@code null}.
      */
     public void setException(@Nullable Throwable exception) {
         this.exception = exception;
     }
 
     /**
-     * Определяет, содержит ли ошибку результат работы сценария бизнес-логики.
+     * This methods checks for saved exception (see {@link #setException(Throwable)}).
      *
-     * @return {@code true} если произошла ошибка в работе сценария
+     * @return {@code true} if the instance has saved exception
      */
     public boolean hasException() {
         return exception != null;
     }
 
     /**
-     * Метод возвращает ошибку, произошедшую в работе сценария бизнес-логики (если есть).
+     * This methods returns the saved exception (see {@link #setException(Throwable)}).
      *
-     * @return произошедшая ошибка (или {@code null})
+     * @return the saved exception or {@code null}
      */
     @Nullable
     public Throwable getException() {
@@ -57,18 +59,18 @@ public abstract class AbstractUseCaseOutput implements UseCaseOutput {
     }
 
     /**
-     * Задает текущее состояние сценария бизнес-логики.
+     * Setter for current execution status of use case.
      *
-     * @param status текущее состояние (не может быть {@code null})
+     * @param status current status (can't be {@code null})
      */
     protected void setStatus(@NonNull Status status) {
         this.status = status;
     }
 
     /**
-     * Метод возвращает текущее состояние сценария бизнес-логики
+     * Getter for current execution status of use case.
      *
-     * @return текущее состояние
+     * @return current status
      */
     @NonNull
     public Status getStatus() {

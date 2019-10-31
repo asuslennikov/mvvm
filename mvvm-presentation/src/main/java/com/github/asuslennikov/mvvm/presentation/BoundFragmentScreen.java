@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2019 Suslennikov Anton
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -32,14 +32,14 @@ import com.github.asuslennikov.mvvm.api.presentation.State;
 import com.github.asuslennikov.mvvm.api.presentation.ViewModel;
 
 /**
- * Реализация {@link Screen}, связывающая его с конкретной {@link ViewModel}
- * и основанная на фрагментах ({@link Fragment}). Базовая отрисовка экрана
- * происходит с помощью технологии
- * <a href="https://developer.android.com/topic/libraries/data-binding">data-binding</a>.
+ * An implementation of {@link Screen} interface, which is linked with specific {@link ViewModel}
+ * and based on activity (see {@link Fragment}). The rendering process is performed
+ * by <a href="https://developer.android.com/topic/libraries/data-binding">data-binding</a>
+ * technology.
  *
- * @param <STATE> Класс, описывающий состояние данного экрана (см. {@link State})
- * @param <VM>    Класс, описывающий поведение экрана (см. {@link ViewModel})
- * @param <B>     Класс биндинга
+ * @param <STATE> Type of class, which contains render information for this screen (see {@link State})
+ * @param <VM>    Type of class, which contains screen behaviour (see {@link ViewModel})
+ * @param <B>     Type of data-binding class
  */
 public abstract class BoundFragmentScreen<STATE extends State, VM extends ViewModel<STATE>,
         B extends ViewDataBinding> extends FragmentScreen<STATE, VM> {
@@ -48,44 +48,48 @@ public abstract class BoundFragmentScreen<STATE extends State, VM extends ViewMo
     private B binding;
 
     /**
-     * Метод возвращает  идентификатор файла разметки.
+     * It provides a layout id with data-binding support for this screen.
      *
-     * @return идентификатор файла разметки
+     * @return a layout id
      */
     protected abstract int getLayoutResourceId();
 
     /**
-     * Возвращает идентификатор переменной биндинга для состояния экрана. Необходимо для корректной работы
-     * метода {@link ViewDataBinding#setVariable(int, Object)}
+     * It provides a data-binding id for state variable (check the {@code variable} value in
+     * {@code data} section of layout file, provided by {@link #getLayoutResourceId()}). It will be
+     * used for {@link ViewDataBinding#setVariable(int, Object)}.
      *
-     * @return идентификатор переменной биндинга для состояния экрана
+     * @return an id for state variable
      * @see #render(State)
      */
     protected abstract int getBindingStateVariableId();
 
     /**
-     * Возвращает идентификатор переменной биндинга для обработчика экрана. Необходимо для корректной работы
-     * метода {@link ViewDataBinding#setVariable(int, Object)}
+     * It provides a data-binding id for view model variable (check the {@code variable} value in
+     * {@code data} section of layout file, provided by {@link #getLayoutResourceId()}). It will be
+     * used for {@link ViewDataBinding#setVariable(int, Object)}.
      *
-     * @return идентификатор переменной биндинга для обработчика экрана
+     * @return an id for view model variable
      */
     protected abstract int getBindingViewModelVariableId();
 
     /**
-     * Возвращает идентификатор переменной биндинга для экрана. Необходимо для корректной работы
-     * метода {@link ViewDataBinding#setVariable(int, Object)}. Может потребоваться когда одна {@link ViewModel}
-     * обрабатывает несколько экранов и требуется передать текущий экран в качестве аргумента для обработчика UI события
+     * It provides a data-binding id for screen variable (check the {@code variable} value in
+     * {@code data} section of layout file, provided by {@link #getLayoutResourceId()}). It will be
+     * used for {@link ViewDataBinding#setVariable(int, Object)}. This variable is not mandatory
+     * and can be skipped in your layout.
      *
-     * @return идентификатор переменной биндинга для экрана
+     * @return an id for screen variable
      */
     protected int getBindingScreenVariableId() {
         return NO_ACTUAL_ID;
     }
 
     /**
-     * Метод возвращает экземпляр data-binding'a для данного экрана.
+     * Method provides access for data-binding instance of this screen (so you can easily use views
+     * with id).
      *
-     * @return экземпляр data-binding'a
+     * @return a data-binding instance
      */
     @NonNull
     protected B getBinding() {

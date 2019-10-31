@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2019 Suslennikov Anton
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,19 +26,20 @@ import io.reactivex.Scheduler;
 import io.reactivex.schedulers.Schedulers;
 
 /**
- * Базовая реализация {@link UseCase} с использованием реактивных стримов и LCE шаблона предоставления данных.
+ * It is base implementation of {@link UseCase} with reactive streams and LCE (Loading/Content/Error)
+ * pattern, applied for output.
  *
- * @param <IN>  Представление входных данных
- * @param <OUT> Представление результата работы
+ * @param <IN>  use case input information
+ * @param <OUT> result of use case's work
  */
 public abstract class AbstractUseCase<IN extends UseCaseInput,
         OUT extends AbstractUseCaseOutput> implements UseCase<IN, OUT> {
 
     /**
-     * Метод возвращает объект типа {@link Scheduler}, который определяет в каком потоке
-     * будет выполняться данный сценарий бизнес-логики.
+     * Method returns an object with {@link Scheduler} type. It defines which thread will be used
+     * for actual work when use case is started.
      *
-     * @return объект, распределяющий выполнение задач по потокам
+     * @return object which directs work to specific threads
      */
     @NonNull
     protected Scheduler getUseCaseScheduler() {
@@ -55,10 +56,12 @@ public abstract class AbstractUseCase<IN extends UseCaseInput,
     }
 
     /**
-     * Метод создает объект для хранения результатов работы бизнес-сценария.
-     * Может быть вызван более, чем один раз. Рекомендуется делать метод создания простым и безопасным от возникновения ошибок.
+     * It creates an instance for output results. Basically, successor should just call a constructor
+     * for specific type. Do not perform any complicated logic here.
+     * <p></p>
+     * This method can be called more than once per execution.
      *
-     * @return объект для хранения результатов работы
+     * @return an instance for output results
      */
     @NonNull
     protected abstract OUT getUseCaseOutput();

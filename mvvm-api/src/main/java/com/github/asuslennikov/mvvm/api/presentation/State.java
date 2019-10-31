@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2019 Suslennikov Anton
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,24 +15,29 @@
  */
 package com.github.asuslennikov.mvvm.api.presentation;
 
+import com.github.asuslennikov.mvvm.api.domain.UseCaseInput;
+import com.github.asuslennikov.mvvm.api.domain.UseCaseOutput;
+
 /**
- * Маркерный интерфейс, означающий что класс описывает состояние экрана ({@link Screen}) в
- * какой-либо момент времени.
+ * It describes a screen ({@link Screen}) state at specific point in time. In fact it is the main
+ * source of information for presentation (the screen).
  * <p></p>
- * <b>Зона ответственности:</b> Хранение информации о текущем состоянии UI компонента (Screen).
+ * In most cases, an implementation is just a POJO object. It's good idea to make it immutable (so
+ * only getters and builder / constructor with all fields). Any implementation of this interface
+ * should never implement the {@link UseCaseInput} or {@link UseCaseOutput} interface at the same
+ * time, so screen state never will be used as an input (output) for use case.
  * <p></p>
- * Класс, реализующий данный интерфейс, обычно представляет собой POJO и не содержит никакой
- * логики. Для удобства сохранения объектов данного класса (иначе говоря, состояний экрана),
- * рекомендуется реализовать интерфейс {@link android.os.Parcelable} или воспользоваться
- * аннотацией {@link org.parceler.Parcel}:
+ * This class shouldn't have any logic, such as mapping, converting and so on. In order to achieve
+ * ability to store (save) this class instances, it is recommended to implement the
+ * {@link android.os.Parcelable} interface or apply the {@link org.parceler.Parcel} annotation:
  * <pre>
  * &#64Parcel(Parcel.Serialization.BEAN)
  * public class MyScreenState implements State {
  *     private String text;
  * }
  * </pre>
- * Рекомендуется давать описательные названия для полей класса. Например, вместо
- * <code>showRequestLoader</code> использовать <code>requestLoaderVisible</code>.
+ * Successors of this interface should have fields with descriptive name, For example, instead of
+ * <code>showRequestLoader</code> consider using the <code>requestLoaderVisible</code>.
  */
 public interface State {
 }
