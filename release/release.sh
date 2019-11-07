@@ -6,4 +6,4 @@ openssl aes-256-cbc -k "$SIGN_KEY" -md sha256 -in release.enc -out release/relea
 # Publish to Bintray
 ./gradlew publishAllPublicationsToBintrayRepository &&
 # Publish to MavenCentral
-./gradlew :mvvm-api:initializeSonatypeStagingRepository :mvvm-domain:initializeSonatypeStagingRepository :mvvm-presentation:initializeSonatypeStagingRepository publishToSonatype closeAndReleaseRepository
+./gradlew publishToSonatype closeAndReleaseRepository

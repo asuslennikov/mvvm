@@ -15,18 +15,6 @@
  */
 
 /**
- * Method checks does the project has applied 'android-library' plugin or not.
- * If the plugin was found, this method will return true
- */
-static def isAndroidProject(def project) {
-    def hasAndroidPlugin = false
-    project.plugins.each { plugin ->
-        hasAndroidPlugin = hasAndroidPlugin || plugin.class.canonicalName.contains("com.android.build.gradle.LibraryPlugin")
-    }
-    return hasAndroidPlugin
-}
-
-/**
  * Method traverse through nodes in pom and return the 'dependencies', or creates it, if not found.
  */
 private static Object getDependenciesNodeFromPom(mavenPom) {
@@ -55,7 +43,7 @@ def fixProjectModuleDependencies(mavenPom) {
 
 /**
  * Method iterates through submodule dependencies and add them to the pom file.
- * Basically should be applied only to android projects, see {@link #isAndroidProject(java.lang.Object)}
+ * Basically should be applied only to android projects
  */
 def appendDependenciesNodeToPom(def mavenPom, def project, String dependencyType) {
     def dependenciesNode = getDependenciesNodeFromPom(mavenPom)
@@ -98,7 +86,7 @@ private static void addDependencyToList(def dependenciesNode, String group, Stri
  * We assume that content of this file is in base64 encoding.
  */
 private static String getSignPrivateKey() {
-    def privateKeyFile = new File("release.key")
+    def privateKeyFile = new File("release/release.key")
     if (!privateKeyFile.exists()) {
         return ""
     }
@@ -126,7 +114,8 @@ ext {
     signPrivateKey = getSignPrivateKey()
 }
 /*
- * Apply and configure plugin, which allows to close and release a repository in Maven Central
+ * Apply and configure plugin, which allows to close and release a staging repository in
+ * Maven Central
  */
 apply plugin: 'io.codearte.nexus-staging'
 nexusStaging {
@@ -140,13 +129,22 @@ nexusStaging {
  * JCenter and Maven Central demand from publisher to provide:
  * - a javadoc (Maven Central only) jar. That's why the `codedoc` and `javadocJar` tasks are added.
  *   Unfortunately, the exact source set is available only when project is evaluated and that's why
- *   we have a post-evaluate task configuration. The `codedoc` name was choosen to avoid conflict
+ *   we have a post-evaluate task configuration. The `codedoc` name was chosen to avoid conflict
  *   with default `javadoc` task.
  * - a source jar
+ * Also Maven Central wants artifacts which are already signed. That why we added the `sign` plugin.
+ * By the way, if you publish only to JCenter, you can skip this plugin.
+ *
+ * And of cause, we want to publish these artifacts and jars. The `de.marcphilipp.nexus-publish`
+ * was added to create a specific staging repository in Maven Central. This plugin applies the
+ * default maven publish plugin by itself and set the correct url. There is no need in bintray
+ * publish plugin because we already have signed artifacts and publish into Maven Central by
+ * ourself.
  *
  */
 subprojects { childProject ->
-    apply plugin: "de.marcphilipp.nexus-publish"
+    apply plugin: 'de.marcphilipp.nexus-publish'
+    apply plugin: 'signing'
 
     task codedoc(type: Javadoc) {
         group = "Documentation"
@@ -172,19 +170,86 @@ subprojects { childProject ->
         }
     }
 
-    afterEvaluate {
+    publishing {
+        repositories {
+            maven {
+                name = 'bintray'
+                url = 'https://api.bintray.com/maven/asuslennikov/maven/android-mvvm/;publish=1'
+                credentials {
+                    username = bintrayUser
+                    password = bintrayKey
+                }
+            }
+        }
+        publications {
+            MVVMModule(MavenPublication) {
+                groupId = "$pomGroupId"
+                artifactId = "$childProject.name"
+                version = "$currentVersion"
+                artifact sourcesJar
+                artifact javadocJar
+
+                pom {
+                    name = "Android MVVM library, module $childProject.name"
+                    description = 'Android ViewModel with "clean architecture" and React states.'
+                    url = 'https://github.com/asuslennikov/mvvm'
+                    licenses {
+                        license {
+                            name = "Apache-2.0"
+                            url = 'https://www.apache.org/licenses/LICENSE-2.0'
+                        }
+                    }
+                    developers {
+                        developer {
+                            id = 'asuslennikov'
+                            name = 'Suslennikov Anton'
+                            email = 'anton.external@gmail.com'
+                        }
+                    }
+                    scm {
+                        connection = 'https://github.com/asuslennikov/mvvm.git'
+                        url = 'https://github.com/asuslennikov/mvvm'
+                    }
+                }
+            }
+        }
+    }
+
+    artifacts {
+        archives sourcesJar
+        archives javadocJar
+    }
+
+    signing {
+        useInMemoryPgpKeys(signPrivateKey, signPassphrase)
+        sign publishing.publications
+    }
+
+    childProject.afterEvaluate {
         // java library modules specific staff
-        childProject.pluginManager.withPlugin('java-library') {
+        pluginManager.withPlugin('java-library') {
             codedoc {
-                source = childProject.sourceSets.main.allJava
-                classpath += childProject.sourceSets.main.compileClasspath
+                source = sourceSets.main.allJava
+                classpath += sourceSets.main.compileClasspath
             }
             sourcesJar {
                 from sourceSets.main.allJava
             }
+            publishing {
+                publications {
+                    MVVMModule(MavenPublication) {
+                        from components.java
+                        pom {
+                            withXml {
+                                fixProjectModuleDependencies(it)
+                            }
+                        }
+                    }
+                }
+            }
         }
         // android library modules specific staff
-        childProject.pluginManager.withPlugin('com.android.library') {
+        pluginManager.withPlugin('com.android.library') {
             codedoc {
                 source = android.sourceSets.main.java.sourceFiles
                 classpath += files("${android.sdkDirectory}/platforms/${android.compileSdkVersion}/android.jar")
@@ -197,87 +262,24 @@ subprojects { childProject ->
             sourcesJar {
                 from android.sourceSets.main.java.sourceFiles
             }
+            publishing {
+                publications {
+                    MVVMModule(MavenPublication) {
+                        afterEvaluate {
+                            artifact bundleReleaseAar
+                        }
+                        pom {
+                            withXml {
+                                appendDependenciesNodeToPom(it, childProject, 'implementation')
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         javadocJar {
             from codedoc.destinationDir
-        }
-
-        artifacts {
-            archives sourcesJar
-            archives javadocJar
-        }
-    }
-}
-// 'projectsEvaluated' because code based on plugin additions
-gradle.projectsEvaluated {
-    rootProject.subprojects { childProject ->
-        apply plugin: 'signing'
-
-
-
-        publishing {
-            publications {
-                MVVMModule(MavenPublication) {
-                    groupId = "$pomGroupId"
-                    artifactId = "$childProject.name"
-                    version = "$currentVersion"
-                    def isAndroidProject = isAndroidProject(childProject)
-                    if (!isAndroidProject) {
-                        from components.java
-                    } else {
-                        artifact bundleReleaseAar
-                    }
-                    artifact sourcesJar
-                    artifact javadocJar
-
-                    pom {
-                        name = "Android MVVM library, module $childProject.name"
-                        description = 'Android ViewModel with "clean architecture" and React states.'
-                        url = 'https://github.com/asuslennikov/mvvm'
-                        licenses {
-                            license {
-                                name = "Apache-2.0"
-                                url = 'https://www.apache.org/licenses/LICENSE-2.0'
-                            }
-                        }
-                        developers {
-                            developer {
-                                id = 'asuslennikov'
-                                name = 'Suslennikov Anton'
-                                email = 'anton.external@gmail.com'
-                            }
-                        }
-                        scm {
-                            connection = 'https://github.com/asuslennikov/mvvm.git'
-                            url = 'https://github.com/asuslennikov/mvvm'
-                        }
-                        withXml {
-                            if (isAndroidProject) {
-                                appendDependenciesNodeToPom(it, project, 'implementation')
-                            } else {
-                                fixProjectModuleDependencies(it)
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        publishing {
-            repositories {
-                maven {
-                    name = 'bintray'
-                    url = 'https://api.bintray.com/maven/asuslennikov/maven/android-mvvm/;publish=1'
-                    credentials {
-                        username = bintrayUser
-                        password = bintrayKey
-                    }
-                }
-            }
-        }
-        signing {
-            useInMemoryPgpKeys(signPrivateKey, signPassphrase)
-            sign publishing.publications
         }
     }
 }
