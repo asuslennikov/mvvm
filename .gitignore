@@ -11,4 +11,5 @@
 /build
 /captures
 .externalNativeBuild
-release.key
+release/release.key
+release/release_local.sh
