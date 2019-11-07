@@ -142,6 +142,7 @@ nexusStaging {
  *   Unfortunately, the exact source set is available only when project is evaluated and that's why
  *   we have a post-evaluate task configuration. The `codedoc` name was choosen to avoid conflict
  *   with default `javadoc` task.
+ * - a source jar
  *
  */
 subprojects { childProject ->
@@ -161,6 +162,10 @@ subprojects { childProject ->
         archiveClassifier = 'javadoc'
     }
 
+    task sourcesJar(type: Jar) {
+        archiveClassifier = 'sources'
+    }
+
     nexusPublishing {
         repositories {
             sonatype()
@@ -174,6 +179,9 @@ subprojects { childProject ->
                 source = childProject.sourceSets.main.allJava
                 classpath += childProject.sourceSets.main.compileClasspath
             }
+            sourcesJar {
+                from sourceSets.main.allJava
+            }
         }
         // android library modules specific staff
         childProject.pluginManager.withPlugin('com.android.library') {
@@ -186,10 +194,18 @@ subprojects { childProject ->
                 options.linksOffline "https://developer.android.com/reference",
                         "${android.sdkDirectory}/docs/reference"
             }
+            sourcesJar {
+                from android.sourceSets.main.java.sourceFiles
+            }
         }
 
         javadocJar {
             from codedoc.destinationDir
+        }
+
+        artifacts {
+            archives sourcesJar
+            archives javadocJar
         }
     }
 }
@@ -198,20 +214,7 @@ gradle.projectsEvaluated {
     rootProject.subprojects { childProject ->
         apply plugin: 'signing'
 
-        task sourcesJar(type: Jar) {
-            if (isAndroidProject(childProject)) {
-                from android.sourceSets.main.java.sourceFiles
-            } else {
-                from sourceSets.main.allJava
-            }
-            archiveClassifier = 'sources'
-        }
 
-
-        artifacts {
-            archives sourcesJar
-            archives javadocJar
-        }
 
         publishing {
             publications {
