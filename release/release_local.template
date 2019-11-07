@@ -1,0 +1,12 @@
+# Call this script to set all necessary environment variables which are needed for release process.
+# Use:
+# `. release/release_local.sh`
+#
+
+export BINTRAY_USER=""
+export BINTRAY_KEY=""
+export OSS_USER=""
+export OSS_KEY=""
+export SIGN_PASSPHRASE=""
+export SIGN_KEY=""
+export GITHUB_KEY=""

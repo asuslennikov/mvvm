@@ -107,7 +107,7 @@ private static String getSignPrivateKey() {
 }
 
 def releaseProperties = new Properties()
-file("release.properties").withInputStream { releaseProperties.load(it) }
+file("release/release.properties").withInputStream { releaseProperties.load(it) }
 ext {
     pomGroupId = 'com.github.asuslennikov'
     versionMajor = releaseProperties.getProperty("release.version.major").toInteger()
