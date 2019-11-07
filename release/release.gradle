@@ -132,7 +132,7 @@ nexusStaging {
  *   we have a post-evaluate task configuration. The `codedoc` name was chosen to avoid conflict
  *   with default `javadoc` task.
  * - a source jar
- * Also Maven Central wants artifacts which are already signed. That why we added the `sign` plugin.
+ * Also Maven Central wants artifacts which are already signed. That's why we added the `sign` plugin.
  * By the way, if you publish only to JCenter, you can skip this plugin.
  *
  * And of cause, we want to publish these artifacts and jars. The `de.marcphilipp.nexus-publish`
