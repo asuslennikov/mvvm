@@ -106,6 +106,9 @@ private static String getSignPrivateKey() {
     return new String(Base64.decoder.decode(new String(privateKeyFile.readBytes(), "UTF-8")))
 }
 
+/*
+ * Read and set all release related properties
+ */
 def releaseProperties = new Properties()
 file("release/release.properties").withInputStream { releaseProperties.load(it) }
 ext {
@@ -122,6 +125,9 @@ ext {
     signPassphrase = System.getenv('SIGN_PASSPHRASE')
     signPrivateKey = getSignPrivateKey()
 }
+/*
+ * Apply and configure plugin, which allows to close and release a repository in Maven Central
+ */
 apply plugin: 'io.codearte.nexus-staging'
 nexusStaging {
     packageGroup = pomGroupId
@@ -130,11 +136,60 @@ nexusStaging {
     username = ossUser
     password = ossKey
 }
-subprojects {
+/*
+ * JCenter and Maven Central demand from publisher to provide:
+ * - a javadoc (Maven Central only) jar. That's why the `codedoc` and `javadocJar` tasks are added.
+ *   Unfortunately, the exact source set is available only when project is evaluated and that's why
+ *   we have a post-evaluate task configuration. The `codedoc` name was choosen to avoid conflict
+ *   with default `javadoc` task.
+ *
+ */
+subprojects { childProject ->
     apply plugin: "de.marcphilipp.nexus-publish"
+
+    task codedoc(type: Javadoc) {
+        group = "Documentation"
+        description = "Generates Javadoc API documentation for the main source code. Can be used for android library module as well"
+        options.memberLevel = JavadocMemberLevel.PROTECTED
+        // See http://blog.joda.org/2014/02/turning-off-doclint-in-jdk-8-javadoc.html
+        options.addStringOption('Xdoclint:none', '-quiet')
+        options.links "https://docs.oracle.com/javase/8/docs/api"
+        options.encoding = 'UTF-8'
+    }
+
+    task javadocJar(type: Jar, dependsOn: codedoc) {
+        archiveClassifier = 'javadoc'
+    }
+
     nexusPublishing {
         repositories {
             sonatype()
+        }
+    }
+
+    afterEvaluate {
+        // java library modules specific staff
+        childProject.pluginManager.withPlugin('java-library') {
+            codedoc {
+                source = childProject.sourceSets.main.allJava
+                classpath += childProject.sourceSets.main.compileClasspath
+            }
+        }
+        // android library modules specific staff
+        childProject.pluginManager.withPlugin('com.android.library') {
+            codedoc {
+                source = android.sourceSets.main.java.sourceFiles
+                classpath += files("${android.sdkDirectory}/platforms/${android.compileSdkVersion}/android.jar")
+                android.libraryVariants.all { variant ->
+                    classpath += variant.getJavaCompileProvider().get().classpath
+                }
+                options.linksOffline "https://developer.android.com/reference",
+                        "${android.sdkDirectory}/docs/reference"
+            }
+        }
+
+        javadocJar {
+            from codedoc.destinationDir
         }
     }
 }
@@ -152,32 +207,6 @@ gradle.projectsEvaluated {
             archiveClassifier = 'sources'
         }
 
-        task codedoc(type: Javadoc) {
-            group = "Documentation"
-            description = "Generates Javadoc API documentation for the main source code. Can be used for android library module as well"
-            if (isAndroidProject(childProject)) {
-                source = android.sourceSets.main.java.sourceFiles
-                classpath += files("${android.sdkDirectory}/platforms/${android.compileSdkVersion}/android.jar")
-                android.libraryVariants.all { variant ->
-                    classpath += variant.getJavaCompileProvider().get().classpath
-                }
-                options.linksOffline "https://developer.android.com/reference",
-                        "${android.sdkDirectory}/docs/reference"
-            } else {
-                source = childProject.sourceSets.main.allJava
-                classpath += childProject.sourceSets.main.compileClasspath
-            }
-            options.memberLevel = JavadocMemberLevel.PROTECTED
-            // See http://blog.joda.org/2014/02/turning-off-doclint-in-jdk-8-javadoc.html
-            options.addStringOption('Xdoclint:none', '-quiet')
-            options.links "https://docs.oracle.com/javase/8/docs/api"
-            options.encoding = 'UTF-8'
-        }
-
-        task javadocJar(type: Jar, dependsOn: codedoc) {
-            from codedoc.destinationDir
-            archiveClassifier = 'javadoc'
-        }
 
         artifacts {
             archives sourcesJar
