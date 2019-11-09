@@ -106,7 +106,7 @@ On this image you can see an overview of main library components:
 | Component layer | Presentation |
 | Responsibility  | It represents some UI action, which should be executed only once (for example, open keyboard or launch shake animation for element). |
 | UML diagram     | ![alt TableImage](./documentation/EffectComponent.png "UML diagram for Effect component") |
-| Notes           | - It's useful for one-shot events, which can be skipped if user is not interacting with UI at given time (if application in background) |
+| Notes           | - It's useful for one-shot events, which can be skipped if user is not interacting with UI at given time (if application is in background) |
 | Example link    | TBD |
  
 </details>
@@ -116,11 +116,11 @@ On this image you can see an overview of main library components:
 
 | Name            | ViewModel |
 | :---            | :--- |
-| Synonyms        | |
+| Synonyms        | Handler, Behaviour, Controller |
 | Component layer | Presentation |
-| Responsibility  | |
+| Responsibility  | It defines what to render on screen and process user input. |
 | UML diagram     | ![alt TableImage](./documentation/ViewModelComponent.png "UML diagram for ViewModel component") |
-| Notes           | |
+| Notes           | - Methods should have names which represent a happened interaction, but not the expected result (use `showMoreClicked()`, but not the `loadNextPage()`). <br /> - It can contain other `ViewModel`s. <br /> - You should remember, that when activity dies, the model dies as well. So keep in mind, that you should be able to restore inner `ViewModel`'s fields based on given `State` object. <br /> - All dependencies should be declared in constructor (don't use `SomeClass.getInstance()`, it makes component untestable). <br /> - Component should have Unit tests. |
 | Example link    | TBD |
  
 </details>
