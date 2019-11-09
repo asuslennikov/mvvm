@@ -56,11 +56,9 @@ Please replace the 'x.y.z' by the latest available version (check the JCenter ba
 
 ## Library components
 
-### Communication diagram
+### Data flow diagram
 
-Data flow diagram:
-
-![alt FullWidthImage](./documentation/GeneralComponents.png "Communication diagram")
+![alt FullWidthImage](./documentation/GeneralComponents.png "Data flow (communication) diagram")
 
 ### UML overview
 
@@ -70,7 +68,7 @@ On this image you can see an overview of main library components:
 
 ### Components details
 
-Presentation layer:
+**Presentation layer:**
 <details open>
     <summary>Screen</summary>
 
@@ -78,9 +76,9 @@ Presentation layer:
 | :---            | :--- |
 | Synonyms        | View, Render |
 | Component layer | Presentation |
-| Responsibility  | It fully controls how user will see and interact with piece of application. In fact it renders a given state and applies effects to UI |
+| Responsibility  | It renders a part of application UI (it controls what user see and how he can communicate with that part of UI). |
 | UML diagram     | ![alt TableImage](./documentation/ScreenComponent.png "UML diagram for Screen component") |
-| Notes           | - It never changes state by itself, always delegates it to view model <br /> - It doesn't have any behaviour-related logic. All this staff goes to view model. <br /> - Screen should have reference to only one view model. <br /> - Screen  doesn't need any external dependencies, except the view model (because it is the only one source of truth for the screen). <br />  - It is recommended to have espresso tests for the screen. Unit tests are not mandatory (because screen should have only UI logic and it's not easy to check correctness with regular unit tests). |
+| Notes           | - It never changes `State` by itself, always delegates it to `ViewModel`. <br /> - It doesn't have any behaviour-related logic. All this staff goes to `ViewModel`. <br /> - It shouldn't have mutable local fields which have influence to UI (except, maybe, a saved `State`). <br /> - `Screen` should have reference to only one `ViewModel`. <br /> - `Screen`  doesn't need any external dependencies, except the `ViewModel` (because it is the only one source of truth for the `Screen`). <br />  - It is recommended to have Espresso tests for the `Screen`. Unit tests are not necessary (because `Screen` have only UI logic and it's not easy to check correctness with regular unit tests). |
 | Example link    | TBD |
  
 </details>
@@ -90,11 +88,11 @@ Presentation layer:
 
 | Name            | State |
 | :---            | :--- |
-| Synonyms        | |
-| Component layer | |
-| Responsibility  | |
+| Synonyms        | ViewState, ScreenState, UIModel, Model |
+| Component layer | Presentation |
+| Responsibility  | It describes a state (collection of elements' properties) at specific moment in time for part of UI |
 | UML diagram     | ![alt TableImage](./documentation/StateComponent.png "UML diagram for State component") |
-| Notes           | |
+| Notes           | - It's a POJO class (data class in Kotlin). <br/> - It doesn't have any logic, only getters and setters. <br /> - Should implement some mechanism for serialization / deseralization. For example, use the `@Parcel` annotation or set JSON annotations of your favorite mapper. <br /> - Fields have descriptive names, but not "action" names (use `newsListLoaderVisible` instead of `showNewsListLoader`). <br /> - No need in Unit tests. |
 | Example link    | TBD |
  
 </details>
@@ -105,7 +103,7 @@ Presentation layer:
 | Name            | Effect |
 | :---            | :--- |
 | Synonyms        | |
-| Component layer | |
+| Component layer | Presentation |
 | Responsibility  | |
 | UML diagram     | ![alt TableImage](./documentation/EffectComponent.png "UML diagram for Effect component") |
 | Notes           | |
@@ -119,7 +117,7 @@ Presentation layer:
 | Name            | ViewModel |
 | :---            | :--- |
 | Synonyms        | |
-| Component layer | |
+| Component layer | Presentation |
 | Responsibility  | |
 | UML diagram     | ![alt TableImage](./documentation/ViewModelComponent.png "UML diagram for ViewModel component") |
 | Notes           | |
@@ -127,14 +125,14 @@ Presentation layer:
  
 </details>
 
-Domain layer:
+**Domain layer:**
 <details>
     <summary>UseCaseInput</summary>
 
 | Name            | UseCaseInput |
 | :---            | :--- |
 | Synonyms        | |
-| Component layer | |
+| Component layer | Domain |
 | Responsibility  | |
 | UML diagram     | ![alt TableImage](./documentation/UseCaseInputComponent.png "UML diagram for UseCaseInput component") |
 | Notes           | |
@@ -148,7 +146,7 @@ Domain layer:
 | Name            | UseCaseOutput |
 | :---            | :--- |
 | Synonyms        | |
-| Component layer | |
+| Component layer | Domain |
 | Responsibility  | |
 | UML diagram     | ![alt TableImage](./documentation/UseCaseOutputComponent.png "UML diagram for UseCaseOutput component") |
 | Notes           | |
@@ -162,7 +160,7 @@ Domain layer:
 | Name            | UseCase |
 | :---            | :--- |
 | Synonyms        | |
-| Component layer | |
+| Component layer | Domain |
 | Responsibility  | |
 | UML diagram     | ![alt TableImage](./documentation/UseCaseComponent.png "UML diagram for UseCase component") |
 | Notes           | |
@@ -170,14 +168,14 @@ Domain layer:
  
 </details>
 
-Data layer:
+**Data layer:**
 <details>
     <summary>Manager</summary>
 
 | Name            | Manager |
 | :---            | :--- |
 | Synonyms        | |
-| Component layer | |
+| Component layer | Data |
 | Responsibility  |  |
 | UML diagram     | No specific component diagram |
 | Notes           | |
