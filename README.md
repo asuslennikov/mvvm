@@ -57,10 +57,47 @@ Please replace the 'x.y.z' by the latest available version (check the JCenter ba
 ## Library components
 
 ### Communication diagram
+
+Data flow diagram:
+
 ![alt FullWidthImage](./documentation/GeneralComponents.png "Communication diagram")
 
 ### UML overview
 
-On this image you can see an overview of main library components.
+On this image you can see an overview of main library components:
 
 ![alt FullWidthImage](./documentation/UmlOverview.png "UML overview of main components")
+
+### Components details
+
+Presentation layer:
+- Screen
+
+| Component name  | Screen |
+| Synonyms        | View, Render |
+| Component layer | Presentation |
+| Responsibility  | It fully controls how user will see and interact with piece of application. In fact it renders a given state and applies effects to UI |
+| UML diagram     | ![alt TableImage](./documentation/ScreenComponent.png "UML diagram for screen component") |
+| Notes           | - It never changes state by itself, always delegates it to view model <br /> - It doesn't have any behaviour-related logic. All this staff goes to view model. <br /> - Screen should have reference to only one view model. <br /> - Screen  doesn't need any external dependencies, except the view model (because it is the only one source of truth for the screen). <br />  - It is recommended to have espresso tests for the screen. Unit tests are not mandatory (because screen should have only UI logic and it's not easy to check correctness with regular unit tests). |
+| Example link    | TBD |
+
+- State
+
+| Component name  | |
+| Synonyms        | |
+| Component layer | |
+| Responsibility  | |
+| UML diagram     | |
+| Notes           | |
+| Example link    | |
+
+- Effect
+- ViewModel
+
+Domain layer:
+- UseCaseInput
+- UseCaseOutput
+- UseCase
+
+Data layer:
+- Manager
