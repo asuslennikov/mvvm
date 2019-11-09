@@ -53,3 +53,14 @@ for your business rules (a `domain` module) and presentation (a `presentation` m
     }
     ```
 Please replace the 'x.y.z' by the latest available version (check the JCenter badge at the top of file).
+
+## Library components
+
+### Communication diagram
+![alt FullWidthImage](./documentation/GeneralComponents.png "Communication diagram")
+
+### UML overview
+
+On this image you can see an overview of main library components.
+
+![alt FullWidthImage](./documentation/UmlOverview.png "UML overview of main components")
