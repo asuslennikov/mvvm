@@ -73,31 +73,90 @@ On this image you can see an overview of main library components:
 Presentation layer:
 - Screen
 
-| Component name  | Screen |
+| Name            | Screen |
+| :---            | :--- |
 | Synonyms        | View, Render |
 | Component layer | Presentation |
 | Responsibility  | It fully controls how user will see and interact with piece of application. In fact it renders a given state and applies effects to UI |
-| UML diagram     | ![alt TableImage](./documentation/ScreenComponent.png "UML diagram for screen component") |
+| UML diagram     | ![alt TableImage](./documentation/ScreenComponent.png "UML diagram for Screen component") |
 | Notes           | - It never changes state by itself, always delegates it to view model <br /> - It doesn't have any behaviour-related logic. All this staff goes to view model. <br /> - Screen should have reference to only one view model. <br /> - Screen  doesn't need any external dependencies, except the view model (because it is the only one source of truth for the screen). <br />  - It is recommended to have espresso tests for the screen. Unit tests are not mandatory (because screen should have only UI logic and it's not easy to check correctness with regular unit tests). |
 | Example link    | TBD |
 
 - State
 
-| Component name  | |
+| Name            | State |
+| :---            | :--- |
 | Synonyms        | |
 | Component layer | |
 | Responsibility  | |
-| UML diagram     | |
+| UML diagram     | ![alt TableImage](./documentation/StateComponent.png "UML diagram for State component") |
 | Notes           | |
-| Example link    | |
+| Example link    | TBD |
 
 - Effect
+
+| Name            | Effect |
+| :---            | :--- |
+| Synonyms        | |
+| Component layer | |
+| Responsibility  | |
+| UML diagram     | ![alt TableImage](./documentation/EffectComponent.png "UML diagram for Effect component") |
+| Notes           | |
+| Example link    | TBD |
+
 - ViewModel
+
+| Name            | ViewModel |
+| :---            | :--- |
+| Synonyms        | |
+| Component layer | |
+| Responsibility  | |
+| UML diagram     | ![alt TableImage](./documentation/ViewModelComponent.png "UML diagram for ViewModel component") |
+| Notes           | |
+| Example link    | TBD |
 
 Domain layer:
 - UseCaseInput
+
+| Name            | UseCaseInput |
+| :---            | :--- |
+| Synonyms        | |
+| Component layer | |
+| Responsibility  | |
+| UML diagram     | ![alt TableImage](./documentation/UseCaseInputComponent.png "UML diagram for UseCaseInput component") |
+| Notes           | |
+| Example link    | TBD |
+
 - UseCaseOutput
+
+| Name            | UseCaseOutput |
+| :---            | :--- |
+| Synonyms        | |
+| Component layer | |
+| Responsibility  | |
+| UML diagram     | ![alt TableImage](./documentation/UseCaseOutputComponent.png "UML diagram for UseCaseOutput component") |
+| Notes           | |
+| Example link    | TBD |
+
 - UseCase
+
+| Name            | UseCase |
+| :---            | :--- |
+| Synonyms        | |
+| Component layer | |
+| Responsibility  | |
+| UML diagram     | ![alt TableImage](./documentation/UseCaseComponent.png "UML diagram for UseCase component") |
+| Notes           | |
+| Example link    | TBD |
 
 Data layer:
 - Manager
+
+| Name            | Manager |
+| :---            | :--- |
+| Synonyms        | |
+| Component layer | |
+| Responsibility  |  |
+| UML diagram     | Np specific component diagram |
+| Notes           | |
+| Example link    | TBD |
