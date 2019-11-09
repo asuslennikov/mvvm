@@ -78,7 +78,7 @@ On this image you can see an overview of main library components:
 | Component layer | Presentation |
 | Responsibility  | It renders a part of application UI (it controls what user see and how he can communicate with that part of UI). |
 | UML diagram     | ![alt TableImage](./documentation/ScreenComponent.png "UML diagram for Screen component") |
-| Notes           | - It never changes `State` by itself, always delegates it to `ViewModel`. <br /> - It doesn't have any behaviour-related logic. All this staff goes to `ViewModel`. <br /> - It shouldn't have mutable local fields which have influence to UI (except, maybe, a saved `State`). <br /> - `Screen` should have reference to only one `ViewModel`. <br /> - `Screen`  doesn't need any external dependencies, except the `ViewModel` (because it is the only one source of truth for the `Screen`). <br />  - It is recommended to have Espresso tests for the `Screen`. Unit tests are not necessary (because `Screen` have only UI logic and it's not easy to check correctness with regular unit tests). |
+| Notes           | - It never changes `State` by itself, always delegates it to `ViewModel`. <br /> - It doesn't have any behaviour-related logic. All this staff goes to `ViewModel`. <br /> - It shouldn't have mutable local fields which have influence to UI (except, maybe, a saved `State`). <br /> - `Screen` should have reference to only one `ViewModel`. <br /> - `Screen`  doesn't need any external dependencies, except the `ViewModel` (because it is the only one source of truth for the `Screen`). <br />  - As a name for concrete class, you can use a general meaning plus the `Screen` suffix (for example `LastNewsScreen`). Layout file should have only general meaning as a name, without any suffix (don't use `_fragment`, `_activity` or `_screen`: `last_news.xml`) <br /> - It is recommended to have Espresso tests for `Screen`. Unit tests are not necessary (because `Screen` have only UI logic and it's not easy to check correctness with regular unit tests). |
 | Example link    | TBD |
  
 </details>
@@ -92,7 +92,7 @@ On this image you can see an overview of main library components:
 | Component layer | Presentation |
 | Responsibility  | It describes a state (collection of elements' properties) at specific moment in time for part of UI |
 | UML diagram     | ![alt TableImage](./documentation/StateComponent.png "UML diagram for State component") |
-| Notes           | - It's a POJO class (data class in Kotlin). <br/> - It doesn't have any logic, only getters and setters. <br /> - Should implement some mechanism for serialization / deseralization. For example, use the `@Parcel` annotation or set JSON annotations of your favorite mapper. <br /> - Fields have descriptive names, but not "action" names (use `newsListLoaderVisible` instead of `showNewsListLoader`). <br /> - No need in Unit tests. |
+| Notes           | - It's a POJO class (data class in Kotlin). <br/> - It doesn't have any logic, only getters and setters. <br /> - Successor of this interface should never implement the `UseCaseInput` or `UseCaseOutput` in the same time. <br /> - As a name for implementation, it's recommended to use a name of specific screen and replace the `Screen` word by `State` (for example `LastNewsState`). <br /> - Should implement some mechanism for serialization / deseralization. For example, use the `@Parcel` annotation or set JSON annotations of your favorite mapper. <br /> - Fields have descriptive names, but not "action" names (use `newsListLoaderVisible` instead of `showNewsListLoader`). <br /> - No need in Unit tests. |
 | Example link    | TBD |
  
 </details>
@@ -102,11 +102,11 @@ On this image you can see an overview of main library components:
 
 | Name            | Effect |
 | :---            | :--- |
-| Synonyms        | |
+| Synonyms        | UIAction, Action |
 | Component layer | Presentation |
-| Responsibility  | |
+| Responsibility  | It represents some UI action, which should be executed only once (for example, open keyboard or launch shake animation for element). |
 | UML diagram     | ![alt TableImage](./documentation/EffectComponent.png "UML diagram for Effect component") |
-| Notes           | |
+| Notes           | - It's useful for one-shot events, which can be skipped if user is not interacting with UI at given time (if application in background) |
 | Example link    | TBD |
  
 </details>
