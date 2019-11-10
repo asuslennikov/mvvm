@@ -161,9 +161,9 @@ On this image you can see an overview of main library components:
 | :---            | :--- |
 | Synonyms        | BusinessScenario, Scenario, Interactor, Command |
 | Component layer | Domain |
-| Responsibility  | It contains application business logic |
+| Responsibility  | It contains application's business logic |
 | UML diagram     | ![alt TableImage](./documentation/UseCaseComponent.png "UML diagram for UseCase component") |
-| Notes           | -It has structure which is similar to algorithms: it has input data, result of work (output data) and rules by which it converts input to output. <br /> - Implementation can reference to another `UseCase`s. <br /> - It communicates with data layer. <br /> - It has no connection with `State` in any way. |
+| Notes           | - It has structure which is similar to algorithms: it has input data, result of work (output data) and rules by which it converts input to output. <br /> - Implementation can reference to another `UseCase`s. <br /> - It communicates with data layer using interfaces (should be defined in domain layer) and takes concrete implementations as arguments in constructor. <br /> - It has no connection with `State` in any way. <br /> - It should have regular unit tests (since it has no platform specific logic). |
 | Example link    | TBD |
  
 </details>
@@ -174,11 +174,11 @@ On this image you can see an overview of main library components:
 
 | Name            | Manager |
 | :---            | :--- |
-| Synonyms        | |
+| Synonyms        | Gateway, Repository |
 | Component layer | Data |
-| Responsibility  |  |
+| Responsibility  | It provides a platform specific implementation for interfaces, defined in domain layer |
 | UML diagram     | No specific component diagram |
-| Notes           | |
+| Notes           | - It doesn't know anything about presentation layer. It depends only on domain layer. <br /> - It uses platform-specific tests (for example, you can use Robolectric). |
 | Example link    | TBD |
  
 </details>
