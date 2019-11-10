@@ -118,7 +118,7 @@ On this image you can see an overview of main library components:
 | :---            | :--- |
 | Synonyms        | Handler, Behaviour, Controller |
 | Component layer | Presentation |
-| Responsibility  | It defines what to render on screen and process user input. |
+| Responsibility  | It defines what to render on screen and how to process user input. |
 | UML diagram     | ![alt TableImage](./documentation/ViewModelComponent.png "UML diagram for ViewModel component") |
 | Notes           | - Methods should have names which represent a happened interaction, but not the expected result (use `showMoreClicked()`, but not the `loadNextPage()`). <br /> - It can contain other `ViewModel`s. <br /> - You should remember, that when activity dies, the model dies as well. So keep in mind, that you should be able to restore inner `ViewModel`'s fields based on given `State` object. <br /> - All dependencies should be declared in constructor (don't use `SomeClass.getInstance()`, it makes component untestable). <br /> - Component should have Unit tests. |
 | Example link    | TBD |
@@ -131,11 +131,11 @@ On this image you can see an overview of main library components:
 
 | Name            | UseCaseInput |
 | :---            | :--- |
-| Synonyms        | |
+| Synonyms        | CommandArgument, Parameter |
 | Component layer | Domain |
-| Responsibility  | |
+| Responsibility  | It holds input information for `UseCase` |
 | UML diagram     | ![alt TableImage](./documentation/UseCaseInputComponent.png "UML diagram for UseCaseInput component") |
-| Notes           | |
+| Notes           | - It's a POJO class (data class in Kotlin). <br /> - It should be immutable. <br/> - It doesn't have any logic, only getters. <br /> - Successors of this interface shouldn't implement the `State` or `UseCaseOutput` interface at the same time. |
 | Example link    | TBD |
  
 </details>
@@ -145,11 +145,11 @@ On this image you can see an overview of main library components:
 
 | Name            | UseCaseOutput |
 | :---            | :--- |
-| Synonyms        | |
+| Synonyms        | CommandResult |
 | Component layer | Domain |
-| Responsibility  | |
+| Responsibility  | It holds `UseCase` result |
 | UML diagram     | ![alt TableImage](./documentation/UseCaseOutputComponent.png "UML diagram for UseCaseOutput component") |
-| Notes           | |
+| Notes           | - It's a POJO class (data class in Kotlin). <br /> - It should be immutable. <br/> - It doesn't have any logic, only getters. <br /> - Successors of this interface shouldn't implement the `State` or `UseCaseInput` interface at the same time. |
 | Example link    | TBD |
  
 </details>
@@ -159,11 +159,11 @@ On this image you can see an overview of main library components:
 
 | Name            | UseCase |
 | :---            | :--- |
-| Synonyms        | |
+| Synonyms        | BusinessScenario, Scenario, Interactor, Command |
 | Component layer | Domain |
-| Responsibility  | |
+| Responsibility  | It contains application business logic |
 | UML diagram     | ![alt TableImage](./documentation/UseCaseComponent.png "UML diagram for UseCase component") |
-| Notes           | |
+| Notes           | -It has structure which is similar to algorithms: it has input data, result of work (output data) and rules by which it converts input to output. <br /> - Implementation can reference to another `UseCase`s. <br /> - It communicates with data layer. <br /> - It has no connection with `State` in any way. |
 | Example link    | TBD |
  
 </details>
