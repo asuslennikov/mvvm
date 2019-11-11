@@ -112,6 +112,7 @@ ext {
     ossKey = System.getenv('OSS_KEY')
     signPassphrase = System.getenv('SIGN_PASSPHRASE')
     signPrivateKey = getSignPrivateKey()
+    githubKey = System.getenv('GITHUB_KEY')
 }
 /*
  * Apply and configure plugin, which allows to close and release a staging repository in
@@ -125,6 +126,37 @@ nexusStaging {
     username = ossUser
     password = ossKey
 }
+
+/*
+ * Apply and configure plugin for uploading to Github Releases page.
+ */
+apply plugin: "com.github.breadmoirai.github-release"
+githubRelease {
+    token "$githubKey"
+    owner "asuslennikov"
+    repo "mvvm"
+    tagName "$versionTag"
+    targetCommitish "master"
+    releaseName "MVVM Library $versionTag"
+    body changelog {
+    }
+    body {
+        ""
+    }
+    draft true
+    releaseAssets files(
+            new File(rootProject.projectDir, 'mvvm-api/build/publications/MVVMModule/pom-default.xml'),
+            new File(rootProject.projectDir, 'mvvm-api/build/publications/MVVMModule/pom-default.xml.asc'),
+            new File(rootProject.projectDir, 'mvvm-api/build/libs/mvvm-api.jar'),
+            new File(rootProject.projectDir, 'mvvm-api/build/libs/mvvm-api.jar.asc'),
+            new File(rootProject.projectDir, 'mvvm-api/build/libs/mvvm-api-javadoc.jar'),
+            new File(rootProject.projectDir, 'mvvm-api/build/libs/mvvm-api-javadoc.jar.asc'),
+            new File(rootProject.projectDir, 'mvvm-api/build/libs/mvvm-api-sources.jar'),
+            new File(rootProject.projectDir, 'mvvm-api/build/libs/mvvm-api-sources.jar.asc')
+    )
+    overwrite true
+}
+
 /*
  * JCenter and Maven Central demand from publisher to provide:
  * - a javadoc (Maven Central only) jar. That's why the `codedoc` and `javadocJar` tasks are added.
