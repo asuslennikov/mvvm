@@ -4,6 +4,28 @@
 It's small architectural library, inspired by Android ViewModel, ReactJS and Clean Architecture. 
 It has not too many code and you easily can gasp the main idea of this projects just within 15-30 min.
 
+## Rationale
+
+Application architecture with clear separation of concern shines most obviously on big projects or projects with
+constant changes. Should you use it for small projects or prototypes? I think, yes. At least, you definitely can
+get benefits in application stability, what is important for projects of any kind.
+
+Pros:
+- You have clean and manageable components
+- It's easy to detect and isolate a failed part
+- With practice you will write code faster
+- It definitely boosts re-usability of your code
+- App becomes more open for changes
+- Writing tests is really easy task
+
+Cons:
+- Even a small screen requires a pile of code for infrastructure (but it's not too big)
+- You need some time to get used to it
+- From now on you have no excuse for abandoning unit-tests
+
+This project tries to reduce amount of infrastructure's code, which you need to write by yourself. 
+It also enforces some limitations, which helps to follow SRP principle.
+
 ## Usage
 Artifacts are published in JCenter and Maven Central repository. Make sure that one of them is listed
 in the `repository` section of `build.gradle` file in your root project folder:
