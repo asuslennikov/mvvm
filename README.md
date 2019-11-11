@@ -1,13 +1,8 @@
 # Android MVVM library
  [![Build Status](https://travis-ci.org/asuslennikov/mvvm.svg?branch=master)](https://travis-ci.org/asuslennikov/mvvm) [![Download](https://api.bintray.com/packages/asuslennikov/maven/android-mvvm/images/download.svg)](https://bintray.com/asuslennikov/maven/android-mvvm/_latestVersion)
 
-It's small architectural library, inspired by Android ViewModel, React state and Clean Architecture. 
+It's small architectural library, inspired by Android ViewModel, ReactJS and Clean Architecture. 
 It has not too many code and you easily can gasp the main idea of this projects just within 15-30 min.
-
-Reference:
-- Android ViewModel: https://developer.android.com/topic/libraries/architecture/viewmodel
-- React State: https://www.w3schools.com/react/react_state.asp
-- Clean Architecture by Uncle Bob: https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html
 
 ## Usage
 Artifacts are published in JCenter and Maven Central repository. Make sure that one of them is listed
@@ -182,3 +177,29 @@ On this image you can see an overview of main library components:
 | Example link    | TBD |
  
 </details>
+
+## Additional reading:
+
+- Clean Architecture:
+  * presentation by Uncle Bob: https://www.youtube.com/watch?v=Nsjsiz2A9mg
+  * article: https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html
+  * usage in real application (e-book, about 40 pages): https://five.agency/android-architecture-part-1-every-new-beginning-is-hard/
+- ViewModel
+  * Wikipedia: https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93viewmodel
+  * Android definition: https://developer.android.com/topic/libraries/architecture/viewmodel
+- React Properties: https://www.w3schools.com/react/react_props.asp
+- Reactive:
+  * Andre Staltz - "What if the user was a function?", link: https://www.youtube.com/watch?v=1zj7M1LnJV4
+  * Jake Wharton - "Managing The Reactive World with RxJava". Presentation: https://jakewharton.com/managing-the-reactive-world-with-rxjava/, video: https://www.youtube.com/watch?v=0IKHxjkgop4
+- MVI pattern:
+  * Blog articles by Hannes Dorfmann:
+    - http://hannesdorfmann.com/android/model-view-intent
+    - http://hannesdorfmann.com/android/mosby3-mvi-1
+    - http://hannesdorfmann.com/android/mosby3-mvi-2
+    - http://hannesdorfmann.com/android/mosby3-mvi-3
+    - http://hannesdorfmann.com/android/mosby3-mvi-4
+    - http://hannesdorfmann.com/android/mosby3-mvi-5
+    - http://hannesdorfmann.com/android/mosby3-mvi-6
+    - http://hannesdorfmann.com/android/mosby3-mvi-7
+    - http://hannesdorfmann.com/android/mosby3-mvi-8
+  * Android Fragmented podcast: https://fragmentedpodcast.com/episodes/148/
