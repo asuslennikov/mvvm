@@ -212,6 +212,10 @@ subprojects { childProject ->
                     password = bintrayKey
                 }
             }
+            maven {
+                name = 'mavenGithub'
+                url = "$rootProject.buildDir/maven"
+            }
         }
         publications {
             MVVMModule(MavenPublication) {
