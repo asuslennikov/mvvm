@@ -120,6 +120,7 @@ ext {
  * Maven Central
  */
 apply plugin: 'io.codearte.nexus-staging'
+
 nexusStaging {
     packageGroup = pomGroupId
     stagingProfileId = "912ea0d90f2f6"
@@ -132,6 +133,16 @@ nexusStaging {
  * Apply and configure plugin for uploading to Github Releases page.
  */
 apply plugin: "com.github.breadmoirai.github-release"
+
+task githubReleaseAssembly(type: Zip) {
+    group = "Install"
+    description = "Installs all publications, provided by sub-projects into local maven repository and zip them"
+
+    archiveFileName = "mvvm-release-${currentVersion}.zip"
+    destinationDirectory = rootProject.buildDir
+    from  fileTree("$githubLocalMavenDirectory")
+}
+
 githubRelease {
     token "$githubKey"
     owner "asuslennikov"
@@ -146,25 +157,9 @@ githubRelease {
     }
     draft true
     releaseAssets files(
-            new File(rootProject.projectDir, 'mvvm-api/build/publications/MVVMModule/pom-default.xml'),
-            new File(rootProject.projectDir, 'mvvm-api/build/publications/MVVMModule/pom-default.xml.asc'),
-            new File(rootProject.projectDir, 'mvvm-api/build/libs/mvvm-api.jar'),
-            new File(rootProject.projectDir, 'mvvm-api/build/libs/mvvm-api.jar.asc'),
-            new File(rootProject.projectDir, 'mvvm-api/build/libs/mvvm-api-javadoc.jar'),
-            new File(rootProject.projectDir, 'mvvm-api/build/libs/mvvm-api-javadoc.jar.asc'),
-            new File(rootProject.projectDir, 'mvvm-api/build/libs/mvvm-api-sources.jar'),
-            new File(rootProject.projectDir, 'mvvm-api/build/libs/mvvm-api-sources.jar.asc')
+            githubReleaseAssembly.archiveFile
     )
     overwrite true
-}
-
-task githubReleaseAssembly(type: Zip) {
-    group = "Install"
-    description = "Installs all publications, provided by sub-projects into local maven repository and zip them"
-    archiveFileName = "mvvm-release-${currentVersion}.zip"
-    destinationDirectory = rootProject.buildDir
-
-    from  fileTree("$githubLocalMavenDirectory")
 }
 
 /*
