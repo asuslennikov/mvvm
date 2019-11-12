@@ -143,26 +143,19 @@ task githubReleaseAssembly(type: Zip) {
     from fileTree("$githubLocalMavenDirectory")
 }
 
-task githubReleaseChangelog() {
-    doLast {
-        def changelog = new String(new File(getRootDir(), "CHANGELOG.md").readBytes(), 'UTF-8')
-        def currentChangesMatcher = (changelog =~ /(?s)#.+?\n((.+?\n)+?)#/)
-        changelog = "# Changes in version ${currentVersion}\n" + currentChangesMatcher[0][1]
-        println changelog
-    }
-}
-
 githubRelease {
     token "$githubKey"
     owner "asuslennikov"
     repo "mvvm"
     tagName "$versionTag"
     targetCommitish "master"
-    releaseName "MVVM Library $versionTag"
+    releaseName "Release mvvm library $versionTag"
     body changelog {
     }
     body {
-        ""
+        def changelog = new String(new File(getRootDir(), "CHANGELOG.md").readBytes(), 'UTF-8')
+        def currentChangesMatcher = (changelog =~ /(?s)#.+?\n((.+?\n)+?)#/)
+        "### Changes in version ${currentVersion}\n" + currentChangesMatcher[0][1]
     }
     draft true
     releaseAssets files(
