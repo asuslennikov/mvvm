@@ -113,6 +113,7 @@ ext {
     signPassphrase = System.getenv('SIGN_PASSPHRASE')
     signPrivateKey = getSignPrivateKey()
     githubKey = System.getenv('GITHUB_KEY')
+    githubLocalMavenDirectory = "$rootProject.buildDir/maven"
 }
 /*
  * Apply and configure plugin, which allows to close and release a staging repository in
@@ -155,6 +156,15 @@ githubRelease {
             new File(rootProject.projectDir, 'mvvm-api/build/libs/mvvm-api-sources.jar.asc')
     )
     overwrite true
+}
+
+task githubReleaseAssembly(type: Zip) {
+    group = "Install"
+    description = "Installs all publications, provided by sub-projects into local maven repository and zip them"
+    archiveFileName = "mvvm-release-${currentVersion}.zip"
+    destinationDirectory = rootProject.buildDir
+
+    from  fileTree("$githubLocalMavenDirectory")
 }
 
 /*
@@ -214,7 +224,7 @@ subprojects { childProject ->
             }
             maven {
                 name = 'mavenGithub'
-                url = "$rootProject.buildDir/maven"
+                url = githubLocalMavenDirectory
             }
         }
         publications {
@@ -262,7 +272,7 @@ subprojects { childProject ->
     }
 
     childProject.afterEvaluate {
-        // java library modules specific staff
+        // java library modules specific stuff
         pluginManager.withPlugin('java-library') {
             codedoc {
                 source = sourceSets.main.allJava
@@ -284,7 +294,7 @@ subprojects { childProject ->
                 }
             }
         }
-        // android library modules specific staff
+        // android library modules specific stuff
         pluginManager.withPlugin('com.android.library') {
             codedoc {
                 source = android.sourceSets.main.java.sourceFiles
@@ -316,6 +326,11 @@ subprojects { childProject ->
 
         javadocJar {
             from codedoc.destinationDir
+        }
+
+        // Setup dependency for root project's task
+        rootProject.tasks.named('githubReleaseAssembly').configure {
+            dependsOn(tasks.named('publishAllPublicationsToMavenGithubRepository'))
         }
     }
 }
