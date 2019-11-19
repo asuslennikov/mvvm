@@ -157,7 +157,7 @@ githubRelease {
         def currentChangesMatcher = (changelog =~ /(?s)#.+?\n((.+?\n)+?)#/)
         "### Changes in version ${currentVersion}\n" + currentChangesMatcher[0][1]
     }
-    draft true
+    draft false
     releaseAssets files(
             githubReleaseAssembly.archiveFile
     )

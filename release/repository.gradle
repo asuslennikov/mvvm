@@ -1,0 +1,61 @@
+/*
+ * Copyright 2019 Suslennikov Anton
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**
+ * Method executes any command with respect of environment variables and work directory
+ * @param executionCommand what to execute
+ * @param environmentVariables specifies environment
+ * @param workDirectory where to execute
+ *
+ * @return {@code executionCommand} result status, {@code true} if it was successfully executed
+ */
+private static boolean executeCommand(String executionCommand, List<String> environmentVariables, File workDirectory) {
+    // Uncomment only for debugging! Sensitive data can be leaked to logs!
+    // println "Executing: [${executionCommand}]"
+    def process = executionCommand.execute(environmentVariables, workDirectory)
+    def processOut = new StringBuffer()
+    def processErr = new StringBuffer()
+    process.consumeProcessOutput(processOut, processErr)
+    process.waitForOrKill(5 * 1000) // 5 sec
+    /*
+    // Uncomment only for debugging! Sensitive data can be leaked to logs!
+    if (processOut.size() > 0) {
+        println processOut
+    } else if (processErr.size() > 0) {
+        println processErr
+    }
+    */
+    return process.exitValue() == 0
+}
+
+task applyReleaseTag() {
+    group = "Repository"
+    description = "Marks the current commit with release tag and push it to server"
+    doLast {
+        def environment = [
+                'GIT_COMMITTER_NAME="Release Machine"',
+                'GIT_COMMITTER_EMAIL="anton.external@gmail.com"'
+        ]
+        def workDirectory = rootProject.projectDir
+        def tagCommand = "git tag -am \"Release $versionTag\" $versionTag"
+        executeCommand(tagCommand, environment, workDirectory) &&
+                executeCommand("git remote add https_origin https://asuslennikov:${githubKey}@github.com/asuslennikov/mvvm.git", environment, workDirectory) &&
+                executeCommand("git push https_origin refs/tags/$versionTag", environment, workDirectory)
+        // always remove origin, even if push fails
+        executeCommand("git remote rm https_origin", environment, workDirectory)
+    }
+}
+

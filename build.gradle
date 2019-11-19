@@ -35,3 +35,4 @@ task clean(type: Delete) {
 
 apply from: 'dependencies.gradle'
 apply from: 'release/release.gradle'
+apply from: 'release/repository.gradle'
