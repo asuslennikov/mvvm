@@ -41,21 +41,89 @@ private static boolean executeCommand(String executionCommand, List<String> envi
     return process.exitValue() == 0
 }
 
+/**
+ * @return environment variables for commands (such as 'git checkout', 'git commit' and etc)
+ */
+private static List<String> executeCommandEnvironment() {
+    return [
+            'GIT_COMMITTER_NAME="Release Machine"',
+            'GIT_COMMITTER_EMAIL="anton.external@gmail.com"',
+            'GIT_AUTHOR_NAME="Release Machine"',
+            'GIT_AUTHOR_EMAIL="anton.external@gmail.com"'
+    ]
+}
+
+/**
+ * @return Provides a command string to add github project as a remote for current repository
+ */
+private String addOriginCommand() {
+    return "git remote add https_origin https://asuslennikov:${githubKey}@github.com/asuslennikov/mvvm.git"
+}
+
+/**
+ * @return Provides a command string to remove github project url from list of remotes
+ */
+private String removeOriginCommand() {
+    return "git remote rm https_origin"
+}
+
 task applyReleaseTag() {
     group = "Repository"
     description = "Marks the current commit with release tag and push it to server"
     doLast {
-        def environment = [
-                'GIT_COMMITTER_NAME="Release Machine"',
-                'GIT_COMMITTER_EMAIL="anton.external@gmail.com"'
-        ]
+        List<String> environment = executeCommandEnvironment()
         def workDirectory = rootProject.projectDir
-        def tagCommand = "git tag -am \"Release $versionTag\" $versionTag"
-        executeCommand(tagCommand, environment, workDirectory) &&
-                executeCommand("git remote add https_origin https://asuslennikov:${githubKey}@github.com/asuslennikov/mvvm.git", environment, workDirectory) &&
-                executeCommand("git push https_origin refs/tags/$versionTag", environment, workDirectory)
-        // always remove origin, even if push fails
-        executeCommand("git remote rm https_origin", environment, workDirectory)
+        boolean result = false
+        try {
+            def tagCommand = "git tag -am \"Release $versionTag\" $versionTag"
+            result = executeCommand(tagCommand, environment, workDirectory) &&
+                    executeCommand(addOriginCommand(), environment, workDirectory) &&
+                    executeCommand("git push https_origin refs/tags/$versionTag", environment, workDirectory)
+        } catch (Exception ex) {
+            println(ex)
+        } finally {
+            // always remove origin, even if push fails
+            executeCommand(removeOriginCommand(), environment, workDirectory)
+        }
+        if (!result) {
+            throw new RuntimeException("Can't create a release tag. Try to uncomment the 'executeCommand' debug code.")
+        }
     }
 }
 
+
+task createNextPatchRelease() {
+    group = "Repository"
+    description = "Performs all necessary steps to create the next patch release"
+    doLast {
+        def environment = executeCommandEnvironment()
+        def workDirectory = rootProject.projectDir
+        def newVersionPatch = versionPatch / 10 * 10 + 10
+        def releasePropertiesFile = new File(workDirectory, 'release/release.properties')
+        releasePropertiesFile.write(
+                """release.version.major=${versionMajor}
+release.version.minor=${versionMinor}
+release.version.patch=${newVersionPatch}"""
+        )
+        def changelogFile = new File(workDirectory, 'CHANGELOG.md')
+        def currentChangelog = changelogFile.readBytes()
+        changelogFile.write("# v${versionMajor}.${versionMinor}.${newVersionPatch}\n\n\n" + new String(currentChangelog, "UTF-8"))
+        def releaseBranchName = "release_${versionMajor}_${versionMinor}_${newVersionPatch}"
+        boolean result = false
+        try {
+            result = executeCommand("git checkout -b ${releaseBranchName}", environment, workDirectory) &&
+                    executeCommand("git add ${releasePropertiesFile.absolutePath} ${changelogFile.absolutePath}", environment, workDirectory) &&
+                    executeCommand("git commit -m \"Prepare release v${versionMajor}.${versionMinor}.${newVersionPatch}\"", environment, workDirectory) &&
+                    executeCommand(addOriginCommand(), environment, workDirectory) &&
+                    executeCommand("git push --set-upstream https_origin ${releaseBranchName}", environment, workDirectory)
+        } catch (Exception ex) {
+            println(ex)
+        } finally {
+            // always remove origin, even if push fails
+            executeCommand(removeOriginCommand(), environment, workDirectory)
+        }
+        if (!result) {
+            throw new RuntimeException("Can't create a new release. Try to uncomment the 'executeCommand' debug code.")
+        }
+    }
+}
