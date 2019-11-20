@@ -17,6 +17,8 @@ buildscript {
         classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.21.1"
         // Plugin protects us from glitches in Maven Central (like creating several staging repos)
         classpath "de.marcphilipp.gradle:nexus-publish-plugin:0.4.0"
+        // Provides easy publication to github releases
+        classpath "gradle.plugin.com.github.breadmoirai:github-release:2.2.9"
     }
 }
 
@@ -32,4 +34,5 @@ task clean(type: Delete) {
 }
 
 apply from: 'dependencies.gradle'
-apply from: 'release.gradle'
+apply from: 'release/release.gradle'
+apply from: 'release/repository.gradle'

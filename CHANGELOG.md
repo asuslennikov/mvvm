@@ -1,3 +1,8 @@
+# v0.8.30
+
+- Added publishing to GitHub Releases page
+- Written documentation in README.md for all main components
+
 # v0.8.20
 
 - License was changed to Apache-2.0

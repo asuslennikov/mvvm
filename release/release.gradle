@@ -1,0 +1,333 @@
+/*
+ * Copyright 2019 Suslennikov Anton
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**
+ * Method traverse through nodes in pom and return the 'dependencies', or creates it, if not found.
+ */
+private static Object getDependenciesNodeFromPom(mavenPom) {
+    def dependenciesNode = mavenPom.asNode().dependencies[0]
+    if (dependenciesNode == null) {
+        dependenciesNode = mavenPom.asNode().appendNode('dependencies')
+    }
+    return dependenciesNode
+}
+
+/**
+ * Method replaces sub-module dependencies (like this: 'api project(":mvvm-api")') via
+ * correct maven declaration
+ */
+def fixProjectModuleDependencies(mavenPom) {
+    def dependenciesNode = mavenPom.asNode().dependencies[0]
+    if (dependenciesNode != null) {
+        dependenciesNode.each { dependency ->
+            if (dependency.groupId[0].text() == rootProject.name) {
+                dependency.groupId[0].setValue("$pomGroupId")
+                dependency.version[0].setValue("$currentVersion")
+            }
+        }
+    }
+}
+
+/**
+ * Method iterates through submodule dependencies and add them to the pom file.
+ * Basically should be applied only to android projects
+ */
+def appendDependenciesNodeToPom(def mavenPom, def project, String dependencyType) {
+    def dependenciesNode = getDependenciesNodeFromPom(mavenPom)
+    project.configurations[dependencyType].allDependencies.each { ModuleDependency dp ->
+        if ('unspecified' == dp.version) {
+            addDependencyToList(dependenciesNode, pomGroupId, dp.name, currentVersion, dp.excludeRules)
+        } else {
+            addDependencyToList(dependenciesNode, dp.group, dp.name, dp.version, dp.excludeRules)
+        }
+    }
+}
+
+/**
+ * Method adds a specific dependency with given GAV info and correct exclusion handling.
+ * @param dependenciesNode node in pom file with all dependencies
+ * (see {@link #getDependenciesNodeFromPom(java.lang.Object)})
+ * @param group groupId of dependency
+ * @param artifact artifactId of dependency
+ * @param version version of dependency
+ * @param excludeRules exclusions for dependency
+ */
+private static void addDependencyToList(def dependenciesNode, String group, String artifact, String version, def excludeRules) {
+    def dependencyNode = dependenciesNode.appendNode('dependency')
+    dependencyNode.appendNode('groupId', group)
+    dependencyNode.appendNode('artifactId', artifact)
+    dependencyNode.appendNode('version', version)
+
+    if (excludeRules != null && excludeRules.size() > 0) {
+        def exclusions = dependencyNode.appendNode('exclusions')
+        excludeRules.each { ExcludeRule ex ->
+            def exclusion = exclusions.appendNode('exclusion')
+            exclusion.appendNode('groupId', ex.group)
+            exclusion.appendNode('artifactId', ex.module)
+        }
+    }
+}
+
+/**
+ * Method provides access to local-stored private PGP key for signing purposes.
+ * We assume that content of this file is in base64 encoding.
+ */
+private static String getSignPrivateKey() {
+    def privateKeyFile = new File("release/release.key")
+    if (!privateKeyFile.exists()) {
+        return ""
+    }
+
+    return new String(Base64.decoder.decode(new String(privateKeyFile.readBytes(), "UTF-8")))
+}
+
+/*
+ * Read and set all release related properties
+ */
+def releaseProperties = new Properties()
+file("release/release.properties").withInputStream { releaseProperties.load(it) }
+ext {
+    pomGroupId = 'com.github.asuslennikov'
+    versionMajor = releaseProperties.getProperty("release.version.major").toInteger()
+    versionMinor = releaseProperties.getProperty("release.version.minor").toInteger()
+    versionPatch = releaseProperties.getProperty("release.version.patch").toInteger()
+    currentVersion = "${versionMajor}.${versionMinor}.${versionPatch}"
+    versionTag = "v${currentVersion}"
+    bintrayUser = System.getenv('BINTRAY_USER')
+    bintrayKey = System.getenv('BINTRAY_KEY')
+    ossUser = System.getenv('OSS_USER')
+    ossKey = System.getenv('OSS_KEY')
+    signPassphrase = System.getenv('SIGN_PASSPHRASE')
+    signPrivateKey = getSignPrivateKey()
+    githubKey = System.getenv('GITHUB_KEY')
+    githubLocalMavenDirectory = "$rootProject.buildDir/maven"
+}
+/*
+ * Apply and configure plugin, which allows to close and release a staging repository in
+ * Maven Central
+ */
+apply plugin: 'io.codearte.nexus-staging'
+
+nexusStaging {
+    packageGroup = pomGroupId
+    stagingProfileId = "912ea0d90f2f6"
+    delayBetweenRetriesInMillis = 5000
+    username = ossUser
+    password = ossKey
+}
+
+/*
+ * Apply and configure plugin for uploading to Github Releases page.
+ */
+apply plugin: "com.github.breadmoirai.github-release"
+
+task githubReleaseAssembly(type: Zip) {
+    group = "Install"
+    description = "Installs all publications, provided by sub-projects into local maven repository and zip them"
+
+    archiveFileName = "mvvm-release-${currentVersion}.zip"
+    destinationDirectory = rootProject.buildDir
+    from fileTree("$githubLocalMavenDirectory")
+}
+
+githubRelease {
+    token "$githubKey"
+    owner "asuslennikov"
+    repo "mvvm"
+    tagName "$versionTag"
+    targetCommitish "master"
+    releaseName "Release mvvm library $versionTag"
+    body changelog {
+    }
+    body {
+        def changelog = new String(new File(getRootDir(), "CHANGELOG.md").readBytes(), 'UTF-8')
+        def currentChangesMatcher = (changelog =~ /(?s)#.+?\n((.+?\n)+?)#/)
+        "### Changes in version ${currentVersion}\n" + currentChangesMatcher[0][1]
+    }
+    draft false
+    releaseAssets files(
+            githubReleaseAssembly.archiveFile
+    )
+    overwrite true
+}
+
+/*
+ * JCenter and Maven Central demand from publisher to provide:
+ * - a javadoc (Maven Central only) jar. That's why the `codedoc` and `javadocJar` tasks are added.
+ *   Unfortunately, the exact source set is available only when project is evaluated and that's why
+ *   we have a post-evaluate task configuration. The `codedoc` name was chosen to avoid conflict
+ *   with default `javadoc` task.
+ * - a source jar
+ * Also Maven Central wants artifacts which are already signed. That's why we added the `sign` plugin.
+ * By the way, if you publish only to JCenter, you can skip this plugin.
+ *
+ * And of cause, we want to publish these artifacts and jars. The `de.marcphilipp.nexus-publish`
+ * was added to create a specific staging repository in Maven Central. This plugin applies the
+ * default maven publish plugin by itself and set the correct url. There is no need in bintray
+ * publish plugin because we already have signed artifacts and publish into Maven Central by
+ * ourself.
+ *
+ */
+subprojects { childProject ->
+    apply plugin: 'de.marcphilipp.nexus-publish'
+    apply plugin: 'signing'
+
+    task codedoc(type: Javadoc) {
+        group = "Documentation"
+        description = "Generates Javadoc API documentation for the main source code. Can be used for android library module as well"
+        options.memberLevel = JavadocMemberLevel.PROTECTED
+        // See http://blog.joda.org/2014/02/turning-off-doclint-in-jdk-8-javadoc.html
+        options.addStringOption('Xdoclint:none', '-quiet')
+        options.links "https://docs.oracle.com/javase/8/docs/api"
+        options.encoding = 'UTF-8'
+    }
+
+    task javadocJar(type: Jar, dependsOn: codedoc) {
+        archiveClassifier = 'javadoc'
+    }
+
+    task sourcesJar(type: Jar) {
+        archiveClassifier = 'sources'
+    }
+
+    nexusPublishing {
+        repositories {
+            sonatype()
+        }
+    }
+
+    publishing {
+        repositories {
+            maven {
+                name = 'bintray'
+                url = 'https://api.bintray.com/maven/asuslennikov/maven/android-mvvm/;publish=1'
+                credentials {
+                    username = bintrayUser
+                    password = bintrayKey
+                }
+            }
+            maven {
+                name = 'mavenGithub'
+                url = githubLocalMavenDirectory
+            }
+        }
+        publications {
+            MVVMModule(MavenPublication) {
+                groupId = "$pomGroupId"
+                artifactId = "$childProject.name"
+                version = "$currentVersion"
+                artifact sourcesJar
+                artifact javadocJar
+
+                pom {
+                    name = "Android MVVM library, module $childProject.name"
+                    description = 'Android ViewModel with "clean architecture" and React states.'
+                    url = 'https://github.com/asuslennikov/mvvm'
+                    licenses {
+                        license {
+                            name = "Apache-2.0"
+                            url = 'https://www.apache.org/licenses/LICENSE-2.0'
+                        }
+                    }
+                    developers {
+                        developer {
+                            id = 'asuslennikov'
+                            name = 'Suslennikov Anton'
+                            email = 'anton.external@gmail.com'
+                        }
+                    }
+                    scm {
+                        connection = 'https://github.com/asuslennikov/mvvm.git'
+                        url = 'https://github.com/asuslennikov/mvvm'
+                    }
+                }
+            }
+        }
+    }
+
+    artifacts {
+        archives sourcesJar
+        archives javadocJar
+    }
+
+    signing {
+        useInMemoryPgpKeys(signPrivateKey, signPassphrase)
+        sign publishing.publications
+    }
+
+    childProject.afterEvaluate {
+        // java library modules specific stuff
+        pluginManager.withPlugin('java-library') {
+            codedoc {
+                source = sourceSets.main.allJava
+                classpath += sourceSets.main.compileClasspath
+            }
+            sourcesJar {
+                from sourceSets.main.allJava
+            }
+            publishing {
+                publications {
+                    MVVMModule(MavenPublication) {
+                        from components.java
+                        pom {
+                            withXml {
+                                fixProjectModuleDependencies(it)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        // android library modules specific stuff
+        pluginManager.withPlugin('com.android.library') {
+            codedoc {
+                source = android.sourceSets.main.java.sourceFiles
+                classpath += files("${android.sdkDirectory}/platforms/${android.compileSdkVersion}/android.jar")
+                android.libraryVariants.all { variant ->
+                    classpath += variant.getJavaCompileProvider().get().classpath
+                }
+                options.linksOffline "https://developer.android.com/reference",
+                        "${android.sdkDirectory}/docs/reference"
+            }
+            sourcesJar {
+                from android.sourceSets.main.java.sourceFiles
+            }
+            publishing {
+                publications {
+                    MVVMModule(MavenPublication) {
+                        afterEvaluate {
+                            artifact bundleReleaseAar
+                        }
+                        pom {
+                            withXml {
+                                appendDependenciesNodeToPom(it, childProject, 'implementation')
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        javadocJar {
+            from codedoc.destinationDir
+        }
+
+        // Setup dependency for root project's task
+        rootProject.tasks.named('githubReleaseAssembly').configure {
+            dependsOn(tasks.named('publishAllPublicationsToMavenGithubRepository'))
+        }
+    }
+}
