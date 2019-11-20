@@ -22,9 +22,9 @@
  *
  * @return {@code executionCommand} result status, {@code true} if it was successfully executed
  */
-private static boolean executeCommand(String executionCommand, List<String> environmentVariables, File workDirectory) {
+private static boolean executeCommand(def executionCommand, List<String> environmentVariables, File workDirectory) {
     // Uncomment only for debugging! Sensitive data can be leaked to logs!
-    // println "Executing: [${executionCommand}]"
+    // println "Executing: ${executionCommand}"
     def process = executionCommand.execute(environmentVariables, workDirectory)
     def processOut = new StringBuffer()
     def processErr = new StringBuffer()
@@ -56,15 +56,15 @@ private static List<String> executeCommandEnvironment() {
 /**
  * @return Provides a command string to add github project as a remote for current repository
  */
-private String addOriginCommand() {
-    return "git remote add https_origin https://asuslennikov:${githubKey}@github.com/asuslennikov/mvvm.git"
+private def addOriginCommand() {
+    return ['git', 'remote', 'add', 'https_origin', "https://asuslennikov:${githubKey}@github.com/asuslennikov/mvvm.git"]
 }
 
 /**
  * @return Provides a command string to remove github project url from list of remotes
  */
-private String removeOriginCommand() {
-    return "git remote rm https_origin"
+private def removeOriginCommand() {
+    return ['git', 'remote', 'rm', 'https_origin']
 }
 
 /**
@@ -96,11 +96,11 @@ release.version.patch=${vPatch}"""
     def releaseBranchName = "release_${vMajor}_${vMinor}_${vPatch}"
     boolean result = false
     try {
-        result = executeCommand("git checkout -b ${releaseBranchName}", environment, workDirectory) &&
-                executeCommand("git add ${releasePropertiesFile.absolutePath} ${changelogFile.absolutePath}", environment, workDirectory) &&
-                executeCommand("git commit -m \"Prepare release v${vMajor}.${vMinor}.${vPatch}\"", environment, workDirectory) &&
+        result = executeCommand(['git', 'checkout', '-b', releaseBranchName], environment, workDirectory) &&
+                executeCommand(['git', 'add', releasePropertiesFile.absolutePath, changelogFile.absolutePath], environment, workDirectory) &&
+                executeCommand(['git', 'commit', '-m', "\"Prepare release v${vMajor}.${vMinor}.${vPatch}\""], environment, workDirectory) &&
                 executeCommand(addOriginCommand(), environment, workDirectory) &&
-                executeCommand("git push --set-upstream https_origin ${releaseBranchName}", environment, workDirectory)
+                executeCommand(['git', 'push', '--set-upstream', 'https_origin', releaseBranchName], environment, workDirectory)
     } catch (Exception ex) {
         println(ex)
     } finally {
@@ -120,10 +120,11 @@ task applyReleaseTag() {
         def workDirectory = rootProject.projectDir
         boolean result = false
         try {
-            def tagCommand = "git tag -am \"Release $versionTag\" $versionTag"
-            result = executeCommand(tagCommand, environment, workDirectory) &&
+            def tagCommand = ['git', 'tag', '-a', versionTag, '-m', "\"Release $versionTag\""]
+            result = executeCommand(['git', 'branch'], environment, workDirectory) &&
+                    executeCommand(tagCommand, environment, workDirectory) &&
                     executeCommand(addOriginCommand(), environment, workDirectory) &&
-                    executeCommand("git push https_origin refs/tags/$versionTag", environment, workDirectory)
+                    executeCommand(['git', 'push', 'https_origin', "refs/tags/$versionTag"], environment, workDirectory)
         } catch (Exception ex) {
             println(ex)
         } finally {

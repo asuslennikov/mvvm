@@ -1,3 +1,7 @@
+# v0.8.31
+
+- Fixed Gradle repository tasks. Fix allows execution on CI
+
 # v0.8.30
 
 - Added publishing to GitHub Releases page
