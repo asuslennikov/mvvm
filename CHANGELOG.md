@@ -1,3 +1,6 @@
+# v0.8.40
+
+
 # v0.8.31
 
 - Fixed Gradle repository tasks. Fix allows execution on CI

@@ -157,7 +157,7 @@ task createNextPatchRelease() {
     group = "Repository"
     description = "Performs all necessary steps to create the next patch release"
     doLast {
-        createNextRelease(versionMajor, versionMinor, versionPatch / 10 * 10 + 10)
+        createNextRelease(versionMajor, versionMinor, (versionPatch / 10).toInteger() * 10 + 10)
     }
 }
 
