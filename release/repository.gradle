@@ -67,6 +67,51 @@ private String removeOriginCommand() {
     return "git remote rm https_origin"
 }
 
+/**
+ * This method prepares repository for the next release. It will:
+ * <ul>
+ *     <li> create a new branch with name 'release_$vMajor_$vMinor_$vPatch', for example 'release_0_8_30' </li>
+ *     <li> update the properties file 'release/release.properties' with given version </li>
+ *     <li> update the 'CHANGELOG.md' file with given version </li>
+ *     <li> add these changes to git index, commit and push to remote repository
+ *     (see {@link #addOriginCommand()}). </li>
+ * </ul>
+ *
+ * @param vMajor major version's part for the next release
+ * @param vMinor minor version's part for the next release
+ * @param vPatch patch version's part for the next release
+ */
+private void createNextRelease(vMajor, vMinor, vPatch) {
+    def environment = executeCommandEnvironment()
+    def workDirectory = rootProject.projectDir
+    def releasePropertiesFile = new File(workDirectory, 'release/release.properties')
+    releasePropertiesFile.write(
+            """release.version.major=${vMajor}
+release.version.minor=${vMinor}
+release.version.patch=${vPatch}"""
+    )
+    def changelogFile = new File(workDirectory, 'CHANGELOG.md')
+    def currentChangelog = changelogFile.readBytes()
+    changelogFile.write("# v${vMajor}.${vMinor}.${vPatch}\n\n\n" + new String(currentChangelog, "UTF-8"))
+    def releaseBranchName = "release_${vMajor}_${vMinor}_${vPatch}"
+    boolean result = false
+    try {
+        result = executeCommand("git checkout -b ${releaseBranchName}", environment, workDirectory) &&
+                executeCommand("git add ${releasePropertiesFile.absolutePath} ${changelogFile.absolutePath}", environment, workDirectory) &&
+                executeCommand("git commit -m \"Prepare release v${vMajor}.${vMinor}.${vPatch}\"", environment, workDirectory) &&
+                executeCommand(addOriginCommand(), environment, workDirectory) &&
+                executeCommand("git push --set-upstream https_origin ${releaseBranchName}", environment, workDirectory)
+    } catch (Exception ex) {
+        println(ex)
+    } finally {
+        // always remove origin, even if push fails
+        executeCommand(removeOriginCommand(), environment, workDirectory)
+    }
+    if (!result) {
+        throw new RuntimeException("Can't create a new release. Try to uncomment the 'executeCommand' debug code.")
+    }
+}
+
 task applyReleaseTag() {
     group = "Repository"
     description = "Marks the current commit with release tag and push it to server"
@@ -91,39 +136,34 @@ task applyReleaseTag() {
     }
 }
 
+task createNextMajorRelease() {
+    group = "Repository"
+    description = "Performs all necessary steps to create the next major release"
+    doLast {
+        createNextRelease(versionMajor + 1, 0, 0)
+    }
+}
+
+task createNextMinorRelease() {
+    group = "Repository"
+    description = "Performs all necessary steps to create the next minor release"
+    doLast {
+        createNextRelease(versionMajor, versionMinor + 1, 0)
+    }
+}
 
 task createNextPatchRelease() {
     group = "Repository"
     description = "Performs all necessary steps to create the next patch release"
     doLast {
-        def environment = executeCommandEnvironment()
-        def workDirectory = rootProject.projectDir
-        def newVersionPatch = versionPatch / 10 * 10 + 10
-        def releasePropertiesFile = new File(workDirectory, 'release/release.properties')
-        releasePropertiesFile.write(
-                """release.version.major=${versionMajor}
-release.version.minor=${versionMinor}
-release.version.patch=${newVersionPatch}"""
-        )
-        def changelogFile = new File(workDirectory, 'CHANGELOG.md')
-        def currentChangelog = changelogFile.readBytes()
-        changelogFile.write("# v${versionMajor}.${versionMinor}.${newVersionPatch}\n\n\n" + new String(currentChangelog, "UTF-8"))
-        def releaseBranchName = "release_${versionMajor}_${versionMinor}_${newVersionPatch}"
-        boolean result = false
-        try {
-            result = executeCommand("git checkout -b ${releaseBranchName}", environment, workDirectory) &&
-                    executeCommand("git add ${releasePropertiesFile.absolutePath} ${changelogFile.absolutePath}", environment, workDirectory) &&
-                    executeCommand("git commit -m \"Prepare release v${versionMajor}.${versionMinor}.${newVersionPatch}\"", environment, workDirectory) &&
-                    executeCommand(addOriginCommand(), environment, workDirectory) &&
-                    executeCommand("git push --set-upstream https_origin ${releaseBranchName}", environment, workDirectory)
-        } catch (Exception ex) {
-            println(ex)
-        } finally {
-            // always remove origin, even if push fails
-            executeCommand(removeOriginCommand(), environment, workDirectory)
-        }
-        if (!result) {
-            throw new RuntimeException("Can't create a new release. Try to uncomment the 'executeCommand' debug code.")
-        }
+        createNextRelease(versionMajor, versionMinor, versionPatch / 10 * 10 + 10)
+    }
+}
+
+task createHotfixRelease() {
+    group = "Repository"
+    description = "Performs all necessary steps to create a hotfix release"
+    doLast {
+        createNextRelease(versionMajor, versionMinor, versionPatch + 1)
     }
 }
