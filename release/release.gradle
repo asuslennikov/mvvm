@@ -112,12 +112,15 @@ ext {
     ossKey = System.getenv('OSS_KEY')
     signPassphrase = System.getenv('SIGN_PASSPHRASE')
     signPrivateKey = getSignPrivateKey()
+    githubKey = System.getenv('GITHUB_KEY')
+    githubLocalMavenDirectory = "$rootProject.buildDir/maven"
 }
 /*
  * Apply and configure plugin, which allows to close and release a staging repository in
  * Maven Central
  */
 apply plugin: 'io.codearte.nexus-staging'
+
 nexusStaging {
     packageGroup = pomGroupId
     stagingProfileId = "912ea0d90f2f6"
@@ -125,6 +128,42 @@ nexusStaging {
     username = ossUser
     password = ossKey
 }
+
+/*
+ * Apply and configure plugin for uploading to Github Releases page.
+ */
+apply plugin: "com.github.breadmoirai.github-release"
+
+task githubReleaseAssembly(type: Zip) {
+    group = "Install"
+    description = "Installs all publications, provided by sub-projects into local maven repository and zip them"
+
+    archiveFileName = "mvvm-release-${currentVersion}.zip"
+    destinationDirectory = rootProject.buildDir
+    from fileTree("$githubLocalMavenDirectory")
+}
+
+githubRelease {
+    token "$githubKey"
+    owner "asuslennikov"
+    repo "mvvm"
+    tagName "$versionTag"
+    targetCommitish "master"
+    releaseName "Release mvvm library $versionTag"
+    body changelog {
+    }
+    body {
+        def changelog = new String(new File(getRootDir(), "CHANGELOG.md").readBytes(), 'UTF-8')
+        def currentChangesMatcher = (changelog =~ /(?s)#.+?\n((.+?\n)+?)#/)
+        "### Changes in version ${currentVersion}\n" + currentChangesMatcher[0][1]
+    }
+    draft false
+    releaseAssets files(
+            githubReleaseAssembly.archiveFile
+    )
+    overwrite true
+}
+
 /*
  * JCenter and Maven Central demand from publisher to provide:
  * - a javadoc (Maven Central only) jar. That's why the `codedoc` and `javadocJar` tasks are added.
@@ -180,6 +219,10 @@ subprojects { childProject ->
                     password = bintrayKey
                 }
             }
+            maven {
+                name = 'mavenGithub'
+                url = githubLocalMavenDirectory
+            }
         }
         publications {
             MVVMModule(MavenPublication) {
@@ -226,7 +269,7 @@ subprojects { childProject ->
     }
 
     childProject.afterEvaluate {
-        // java library modules specific staff
+        // java library modules specific stuff
         pluginManager.withPlugin('java-library') {
             codedoc {
                 source = sourceSets.main.allJava
@@ -248,7 +291,7 @@ subprojects { childProject ->
                 }
             }
         }
-        // android library modules specific staff
+        // android library modules specific stuff
         pluginManager.withPlugin('com.android.library') {
             codedoc {
                 source = android.sourceSets.main.java.sourceFiles
@@ -280,6 +323,11 @@ subprojects { childProject ->
 
         javadocJar {
             from codedoc.destinationDir
+        }
+
+        // Setup dependency for root project's task
+        rootProject.tasks.named('githubReleaseAssembly').configure {
+            dependsOn(tasks.named('publishAllPublicationsToMavenGithubRepository'))
         }
     }
 }
