@@ -263,9 +263,16 @@ subprojects { childProject ->
         archives javadocJar
     }
 
-    signing {
-        useInMemoryPgpKeys(signPrivateKey, signPassphrase)
-        sign publishing.publications
+    /*
+     We want to allow to publish into the local maven repository even if there is no sign configuration.
+     This way, user can build the 'example' module by himself. Otherwise he will face the following exception:
+     'Cannot perform signing task ':mvvm-api:signMVVMModulePublication' because it has no configured signatory'.
+     */
+    if (signPassphrase != null && signPassphrase.length() > 0) {
+        signing {
+            useInMemoryPgpKeys(signPrivateKey, signPassphrase)
+            sign publishing.publications
+        }
     }
 
     childProject.afterEvaluate {
