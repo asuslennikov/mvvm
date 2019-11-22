@@ -11,7 +11,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.5.1'
+        classpath 'com.android.tools.build:gradle:3.5.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         // Plugin allows automatically release a staged repository in MavenCentral (without GUI)
         classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.21.1"
