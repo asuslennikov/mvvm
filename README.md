@@ -16,7 +16,7 @@ Pros:
 - With practice you will write code faster
 - It definitely boosts re-usability of your code
 - App becomes more open for changes
-- Writing tests is really easy task
+- Writing tests is a really easy task
 
 Cons:
 - Even a small screen requires a pile of code for infrastructure (but it's not too big)

@@ -13,3 +13,10 @@
 .externalNativeBuild
 release/release.key
 release/release_local.sh
+example/build
+example/.idea
+example/gradle
+example/.gradle
+example/app/build
+example/gradlew.bat
+example/gradlew
