@@ -1,0 +1,2 @@
+rootProject.name='TaskMan'
+include ':app'
