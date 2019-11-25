@@ -1,7 +1,6 @@
 package com.github.asuslennikov.taskman.di
 
-import com.github.asuslennikov.mvvm.api.presentation.ViewModel
-import com.github.asuslennikov.taskman.RootState
+import com.github.asuslennikov.taskman.ComponentRegistry
 import com.github.asuslennikov.taskman.data.di.DataProvider
 import com.github.asuslennikov.taskman.domain.di.DomainProvider
 import dagger.Component
@@ -11,7 +10,7 @@ import dagger.Component
     modules = [ApplicationModule::class],
     dependencies = [DomainProvider::class, DataProvider::class]
 )
-interface ApplicationComponent {
+interface ApplicationComponent : ComponentRegistry {
 
-    fun getRootViewModel(): ViewModel<RootState>
+
 }
