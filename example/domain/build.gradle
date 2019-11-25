@@ -1,7 +1,14 @@
 apply plugin: 'java-library'
+apply plugin: 'kotlin'
+apply plugin: 'kotlin-kapt'
 
 dependencies {
     api libraries.mvvm_api
+    implementation libraries.kotlin_stdlib
+    implementation libraries.javax_inject
+    implementation "$libraries.dagger"
+
+    kapt "$libraries.dagger_compiler"
 }
 
 sourceCompatibility = JavaVersion.VERSION_1_8

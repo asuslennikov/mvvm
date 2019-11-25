@@ -1,3 +1,4 @@
 rootProject.name='TaskMan'
 include ':app'
 include ':domain'
+include ':data'

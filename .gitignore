@@ -18,5 +18,7 @@ example/.idea
 example/gradle
 example/.gradle
 example/app/build
+example/data/build
+example/domain/build
 example/gradlew.bat
 example/gradlew
