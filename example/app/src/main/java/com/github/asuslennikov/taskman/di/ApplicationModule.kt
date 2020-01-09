@@ -36,6 +36,12 @@ class ApplicationModule(private val application: Context) : DataDependencies {
 
     @Module
     internal interface ViewModelBindingsModule {
+/*
+        @Binds
+        @IntoMap
+        @ViewModelKey(SplashViewModel::class)
+        fun bindsSplashViewModel(instance: SplashViewModel): ViewModel<*>
+ */
 
         @Binds
         @IntoMap

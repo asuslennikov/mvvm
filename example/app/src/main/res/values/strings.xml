@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">TaskMan</string>
+    <string name="splash_application_name">TaskMan</string>
 </resources>

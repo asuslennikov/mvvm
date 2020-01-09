@@ -6,7 +6,7 @@ file("../release/release.properties").withInputStream { releaseProperties.load(i
 ext {
     versions += [
             lifecycle : '2.0.0',
-            navigation: '2.0.0',
+            navigation: '2.1.0',
             dagger    : '2.22.1',
             mvvm      : "${releaseProperties.getProperty("release.version.major").toInteger()}.${releaseProperties.getProperty("release.version.minor").toInteger()}.${releaseProperties.getProperty("release.version.patch").toInteger()}"
     ]

@@ -23,9 +23,14 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
+    }
+
+    dataBinding {
+        enabled = true
     }
 }
 
@@ -37,9 +42,11 @@ dependencies {
     implementation libraries.kotlin_ktx
     implementation libraries.androidx_constraintlayout
     implementation libraries.mvvm_presentation
-    implementation "$libraries.dagger"
+    implementation libraries.dagger
+    implementation libraries.androidx_navigation_fragment
+    implementation libraries.androidx_navigation_ui
 
-    kapt "$libraries.dagger_compiler"
+    kapt libraries.dagger_compiler
 
     testImplementation testLibraries.junit
     androidTestImplementation testLibraries.androidx_test_ext_junit
