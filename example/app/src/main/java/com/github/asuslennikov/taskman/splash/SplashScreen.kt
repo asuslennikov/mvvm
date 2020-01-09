@@ -1,5 +1,6 @@
 package com.github.asuslennikov.taskman.splash
 
+import android.view.animation.AnimationUtils
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
@@ -24,5 +25,15 @@ class SplashScreen : Fragment<SplashState, SplashViewModel, SplashBinding>(
                 return SplashViewModel(context?.applicationContext as TaskApplication) as T
             }
         }).get(SplashViewModel::class.java)
+    }
+
+    override fun render(screenState: SplashState) {
+        super.render(screenState)
+        if (screenState.loading) {
+            val loadingAnimation = AnimationUtils.loadAnimation(context, R.anim.splash_animation)
+            binding.splashText.startAnimation(loadingAnimation)
+        } else {
+            binding.splashText.clearAnimation()
+        }
     }
 }

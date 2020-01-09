@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="big_header_text_size">32sp</dimen>
+
+    <integer name="splash_scale_animation_duration">800</integer>
+    <integer name="splash_alpha_animation_duration">@integer/splash_scale_animation_duration</integer>
 </resources>
