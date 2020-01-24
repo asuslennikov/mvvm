@@ -7,5 +7,15 @@
     <fragment
         android:id="@+id/splashScreen"
         android:name="com.github.asuslennikov.taskman.splash.SplashScreen"
-        android:label="SplashScreen" />
+        android:label="SplashScreen">
+        <action
+            android:id="@+id/action_splashScreen_to_tasksListScreen"
+            app:destination="@id/tasksList"
+            app:popUpTo="@id/tasksList"
+            app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/tasksList"
+        android:name="com.github.asuslennikov.taskman.task.list.TasksListScreen"
+        android:label="TasksList" />
 </navigation>

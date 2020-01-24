@@ -6,8 +6,8 @@ import com.github.asuslennikov.mvvm.presentation.ViewModelFactory
 import com.github.asuslennikov.mvvm.presentation.ViewModelProvider
 import com.github.asuslennikov.mvvm.presentation.di.AndroidXViewModelProvider
 import com.github.asuslennikov.mvvm.presentation.di.InjectableViewModelFactory
-import com.github.asuslennikov.taskman.RootViewModel
 import com.github.asuslennikov.taskman.data.di.DataDependencies
+import com.github.asuslennikov.taskman.task.list.TasksListViewModel
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -39,13 +39,13 @@ class ApplicationModule(private val application: Context) : DataDependencies {
 /*
         @Binds
         @IntoMap
-        @ViewModelKey(SplashViewModel::class)
-        fun bindsSplashViewModel(instance: SplashViewModel): ViewModel<*>
+        @ViewModelKey(::class)
+        fun binds(instance: ): ViewModel<*>
  */
 
         @Binds
         @IntoMap
-        @ViewModelKey(RootViewModel::class)
-        fun bindsRootViewModel(instance: RootViewModel): ViewModel<*>
+        @ViewModelKey(TasksListViewModel::class)
+        fun bindsTasksListViewModel(instance: TasksListViewModel): ViewModel<*>
     }
 }

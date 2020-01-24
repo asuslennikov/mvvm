@@ -28,6 +28,7 @@ class SplashViewModel(private val app: TaskApplication) : AbstractViewModel<Spla
 
     private fun onLoadingCompleted() {
         sendState(SplashState(false))
+        sendEffect(SplashEffect.OPEN_TASKS_LIST_SCREEN)
     }
 
     override fun buildInitialState(): SplashState = SplashState(true)

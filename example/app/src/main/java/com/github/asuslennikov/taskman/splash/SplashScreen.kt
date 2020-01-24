@@ -4,6 +4,8 @@ import android.view.animation.AnimationUtils
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.fragment.findNavController
+import com.github.asuslennikov.mvvm.api.presentation.Effect
 import com.github.asuslennikov.taskman.Fragment
 import com.github.asuslennikov.taskman.R
 import com.github.asuslennikov.taskman.TaskApplication
@@ -21,7 +23,7 @@ class SplashScreen : Fragment<SplashState, SplashViewModel, SplashBinding>(
     override fun createViewModel(): SplashViewModel {
         return ViewModelProviders.of(this, object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
-            override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 return SplashViewModel(context?.applicationContext as TaskApplication) as T
             }
         }).get(SplashViewModel::class.java)
@@ -34,6 +36,14 @@ class SplashScreen : Fragment<SplashState, SplashViewModel, SplashBinding>(
             binding.splashText.startAnimation(loadingAnimation)
         } else {
             binding.splashText.clearAnimation()
+        }
+    }
+
+    override fun applyEffect(screenEffect: Effect) {
+        if (screenEffect is SplashEffect) {
+            when (screenEffect) {
+                SplashEffect.OPEN_TASKS_LIST_SCREEN -> findNavController().navigate(R.id.action_splashScreen_to_tasksListScreen)
+            }
         }
     }
 }
