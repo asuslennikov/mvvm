@@ -34,6 +34,8 @@ dependencies {
     implementation libraries.kotlin_stdlib
     implementation libraries.javax_inject
     implementation "$libraries.dagger"
+    implementation libraries.room
 
     kapt "$libraries.dagger_compiler"
+    kapt libraries.room_compiler
 }

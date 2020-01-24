@@ -22,7 +22,7 @@ ext {
             androidx_annotation             : "androidx.annotation:annotation:1.1.0",
             androidx_core                   : "androidx.core:core-ktx:1.0.2",
             androidx_legacy                 : 'androidx.legacy:legacy-support-v4:1.0.0',
-            androidx_appcompat              : "androidx.appcompat:appcompat:1.0.2",
+            androidx_appcompat              : "androidx.appcompat:appcompat:1.1.0",
 
             // UI libraries
             androidx_recyclerview           : "androidx.recyclerview:recyclerview:1.0.0"

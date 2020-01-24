@@ -8,6 +8,7 @@ ext {
             lifecycle : '2.0.0',
             navigation: '2.1.0',
             dagger    : '2.22.1',
+            room      : '2.0.0',
             mvvm      : "${releaseProperties.getProperty("release.version.major").toInteger()}.${releaseProperties.getProperty("release.version.minor").toInteger()}.${releaseProperties.getProperty("release.version.patch").toInteger()}"
     ]
 
@@ -35,6 +36,10 @@ ext {
             androidx_coordinatorlayout      : 'androidx.coordinatorlayout:coordinatorlayout:1.0.0',
             androidx_vectordrawable         : 'androidx.vectordrawable:vectordrawable:1.0.1',
             androidx_vectordrawable_animated: 'androidx.vectordrawable:vectordrawable-animated:1.0.0',
-            shimmer_layout                  : 'io.supercharge:shimmerlayout:2.1.0'
+            shimmer_layout                  : 'io.supercharge:shimmerlayout:2.1.0',
+
+            // ROOM
+            room                            : "androidx.room:room-runtime:$versions.room",
+            room_compiler                   : "androidx.room:room-compiler:$versions.room"
     ]
 }
