@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
 import com.github.asuslennikov.taskman.data.database.entity.TaskEntity
+import io.reactivex.Observable
 
 @Dao
 interface TaskDao {
@@ -16,4 +17,7 @@ interface TaskDao {
 
     @Query("SELECT * from task WHERE taskId = :id")
     fun getById(id: Long): TaskEntity?
+
+    @Query("SELECT * FROM task")
+    fun getTasks(): Observable<List<TaskEntity>>
 }
