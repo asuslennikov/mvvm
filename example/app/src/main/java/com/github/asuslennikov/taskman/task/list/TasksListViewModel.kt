@@ -10,4 +10,8 @@ class TasksListViewModel @Inject constructor(private val getTaskUseCase: GetTask
     override fun buildInitialState(): TasksListState {
         return TasksListState()
     }
+
+    fun onAddTaskClick() {
+
+    }
 }

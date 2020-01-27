@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">TaskMan</string>
-    <string name="splash_application_name">TaskMan</string>
+    <string name="splash_application_name">@string/app_name</string>
+    <string name="tasks_list_plus_button_description">Add new task</string>
 </resources>

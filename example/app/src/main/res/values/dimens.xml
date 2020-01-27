@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="big_header_text_size">32sp</dimen>
+    <dimen name="half_normal_padding">8dp</dimen>
+    <dimen name="normal_margin">16dp</dimen>
 
     <integer name="splash_visibility_minimum_duration">1500</integer>
     <integer name="splash_scale_animation_duration">800</integer>
