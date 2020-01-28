@@ -4,6 +4,7 @@ import androidx.databinding.ViewDataBinding
 import com.github.asuslennikov.mvvm.api.presentation.State
 import com.github.asuslennikov.mvvm.api.presentation.ViewModel
 import com.github.asuslennikov.mvvm.presentation.BoundFragmentScreen
+import com.github.asuslennikov.mvvm.presentation.ViewModelProvider
 
 abstract class Fragment<STATE : State, VM : ViewModel<STATE>, B : ViewDataBinding>(
     private val layoutId: Int,
@@ -16,9 +17,14 @@ abstract class Fragment<STATE : State, VM : ViewModel<STATE>, B : ViewDataBindin
 
     override fun getBindingStateVariableId(): Int = BR.state
 
+    protected fun getViewModelProvider(): ViewModelProvider {
+        return ((context?.applicationContext as? ComponentRegistry)?.getViewModelProvider()
+            ?: throw RuntimeException("Can't retrieve a ViewModel provider"))
+    }
+
     override fun createViewModel(): VM {
-        val viewModelProvider = (context?.applicationContext as? ComponentRegistry)?.getViewModelProvider()
-            ?: throw RuntimeException("Can't retrieve a ViewModel provider")
+        val viewModelProvider = getViewModelProvider()
         return viewModelProvider.getViewModel(this, viewModelClass)
     }
+
 }
