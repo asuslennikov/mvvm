@@ -26,7 +26,13 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8.toString()
+    }
 }
 
 dependencies {
@@ -36,6 +42,7 @@ dependencies {
     implementation libraries.dagger
     implementation libraries.room
     implementation libraries.room_rxjava
+    implementation libraries.jsr310
 
     kapt "$libraries.dagger_compiler"
     kapt libraries.room_compiler

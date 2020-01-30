@@ -7,6 +7,7 @@ import com.github.asuslennikov.mvvm.presentation.ViewModelProvider
 import com.github.asuslennikov.mvvm.presentation.di.AndroidXViewModelProvider
 import com.github.asuslennikov.mvvm.presentation.di.InjectableViewModelFactory
 import com.github.asuslennikov.taskman.data.di.DataDependencies
+import com.github.asuslennikov.taskman.task.card.TaskCardViewModel
 import com.github.asuslennikov.taskman.task.list.TasksListViewModel
 import com.github.asuslennikov.taskman.task.list.item.DateHeaderViewModel
 import com.github.asuslennikov.taskman.task.list.item.TaskItemViewModel
@@ -59,5 +60,10 @@ class ApplicationModule(private val application: Context) : DataDependencies {
         @IntoMap
         @ViewModelKey(TaskItemViewModel::class)
         fun bindsTaskItemViewModel(instance: TaskItemViewModel): ViewModel<*>
+
+        @Binds
+        @IntoMap
+        @ViewModelKey(TaskCardViewModel::class)
+        fun bindsTaskCardViewModel(instance: TaskCardViewModel): ViewModel<*>
     }
 }

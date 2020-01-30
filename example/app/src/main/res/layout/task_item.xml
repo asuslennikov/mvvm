@@ -6,6 +6,10 @@
     <data>
 
         <variable
+            name="screen"
+            type="com.github.asuslennikov.taskman.task.list.item.TaskItemScreen" />
+
+        <variable
             name="state"
             type="com.github.asuslennikov.taskman.task.list.item.TaskItemState" />
 
@@ -15,6 +19,8 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:padding="@dimen/half_normal_padding"
+        android:onClick="@{() -> viewModel.onTaskClick(screen)}"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -23,6 +29,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@{state.title}"
+            android:textSize="@dimen/normal_text_size"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

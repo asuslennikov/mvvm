@@ -41,6 +41,9 @@ ext {
             // ROOM
             room                            : "androidx.room:room-runtime:$versions.room",
             room_rxjava                     : "android.arch.persistence.room:rxjava2:1.1.1",
-            room_compiler                   : "androidx.room:room-compiler:$versions.room"
+            room_compiler                   : "androidx.room:room-compiler:$versions.room",
+
+            // java.time library
+            jsr310                          : 'com.jakewharton.threetenabp:threetenabp:1.2.2'
     ]
 }

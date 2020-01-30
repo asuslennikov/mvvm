@@ -11,7 +11,7 @@ import com.github.asuslennikov.mvvm.presentation.BR
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 
-abstract class BoundViewHolder<STATE : ListItemState, VM : ViewModel<STATE>>(
+abstract class BoundViewHolder<STATE : ListItemState, VM : ViewModel<STATE>, B : ViewDataBinding>(
     itemView: View,
     private val viewModel: VM
 ) : ViewHolder(itemView), Screen<STATE> {
@@ -20,7 +20,7 @@ abstract class BoundViewHolder<STATE : ListItemState, VM : ViewModel<STATE>>(
         const val NO_ACTUAL_ID = 0
     }
 
-    private val binding: ViewDataBinding = DataBindingUtil.bind(itemView)!!
+    protected val binding: B = DataBindingUtil.bind(itemView)!!
     private val disposable: CompositeDisposable = CompositeDisposable()
     private var screenState: STATE? = null
 
@@ -38,7 +38,7 @@ abstract class BoundViewHolder<STATE : ListItemState, VM : ViewModel<STATE>>(
         disposable.add(viewModel.getState(this)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe { render(it) })
-        if (holderSupportsEffects()) {
+        if (screenSupportsEffects()) {
             disposable.addAll(viewModel.getEffect(this)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { applyEffect(it) })
@@ -81,7 +81,7 @@ abstract class BoundViewHolder<STATE : ListItemState, VM : ViewModel<STATE>>(
      *
      * @return `true` if holder can process effects
      */
-    protected open fun holderSupportsEffects(): Boolean = false
+    protected open fun screenSupportsEffects(): Boolean = false
 
     override fun getSavedState(): STATE? {
         return screenState

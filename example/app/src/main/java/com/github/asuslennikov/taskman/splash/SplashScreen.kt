@@ -4,6 +4,7 @@ import android.view.animation.AnimationUtils
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.NavHostController
 import androidx.navigation.fragment.findNavController
 import com.github.asuslennikov.mvvm.api.presentation.Effect
 import com.github.asuslennikov.taskman.Fragment
@@ -42,7 +43,10 @@ class SplashScreen : Fragment<SplashState, SplashViewModel, SplashBinding>(
     override fun applyEffect(screenEffect: Effect) {
         if (screenEffect is SplashEffect) {
             when (screenEffect) {
-                SplashEffect.OPEN_TASKS_LIST_SCREEN -> findNavController().navigate(R.id.action_splashScreen_to_tasksListScreen)
+                SplashEffect.OPEN_TASKS_LIST_SCREEN -> findNavController().run {
+                    (this as NavHostController).enableOnBackPressed(true)
+                    navigate(R.id.action_splashScreen_to_tasksListScreen)
+                }
             }
         }
     }

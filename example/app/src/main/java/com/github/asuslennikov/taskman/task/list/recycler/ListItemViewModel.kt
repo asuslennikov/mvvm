@@ -11,7 +11,7 @@ import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
 
-abstract class RecyclerViewModel<STATE : ListItemState> : androidx.lifecycle.ViewModel(), ViewModel<STATE> {
+abstract class ListItemViewModel<STATE : ListItemState> : androidx.lifecycle.ViewModel(), ViewModel<STATE> {
     private val stateMapping: MutableMap<Any, BehaviorSubject<STATE>> = HashMap()
     private val effectMapping: MutableMap<Any, Subject<Effect>> = HashMap()
     private val compositeDisposable = CompositeDisposable()

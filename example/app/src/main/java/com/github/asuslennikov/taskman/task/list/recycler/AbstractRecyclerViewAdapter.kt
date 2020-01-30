@@ -9,7 +9,7 @@ import com.github.asuslennikov.mvvm.api.presentation.ViewModel
 import com.github.asuslennikov.mvvm.presentation.ViewModelProvider
 
 abstract class AbstractRecyclerViewAdapter(private val viewModelProvider: ViewModelProvider.Linked) :
-    ListAdapter<ListItemState, BoundViewHolder<out ListItemState, *>>(StateListItemCallback()) {
+    ListAdapter<ListItemState, BoundViewHolder<out ListItemState, *, *>>(ListItemStateDiffCallback()) {
 
     protected fun inflate(parent: ViewGroup, layoutResourceId: Int): View =
         LayoutInflater.from(parent.context).inflate(layoutResourceId, parent, false)
@@ -20,7 +20,7 @@ abstract class AbstractRecyclerViewAdapter(private val viewModelProvider: ViewMo
     override fun getItemViewType(position: Int): Int = getItem(position).run { this::class.java.hashCode() }
 
     @Suppress("UNCHECKED_CAST")
-    override fun onBindViewHolder(holder: BoundViewHolder<out ListItemState, *>, position: Int) {
-        (holder as BoundViewHolder<ListItemState, *>).bind(getItem(position))
+    override fun onBindViewHolder(holder: BoundViewHolder<out ListItemState, *, *>, position: Int) {
+        (holder as BoundViewHolder<ListItemState, *, *>).bind(getItem(position))
     }
 }

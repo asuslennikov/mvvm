@@ -10,7 +10,7 @@ import com.github.asuslennikov.taskman.task.list.recycler.ListItemState
 
 class TasksListAdapter(viewModelProvider: ViewModelProvider.Linked) : AbstractRecyclerViewAdapter(viewModelProvider) {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BoundViewHolder<out ListItemState, *> {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BoundViewHolder<out ListItemState, *, *> {
         return when (viewType) {
             DateHeaderState::class.java.hashCode() -> DateHeaderScreen(
                 inflate(parent, R.layout.date_header),
