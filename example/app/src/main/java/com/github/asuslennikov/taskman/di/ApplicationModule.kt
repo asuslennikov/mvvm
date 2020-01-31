@@ -28,7 +28,9 @@ class ApplicationModule(private val application: Context) : DataDependencies {
     @Provides
     @ApplicationScope
     fun viewModelFactory(instances: @JvmSuppressWildcards Map<Class<out ViewModel<*>>, Provider<ViewModel<*>>>): ViewModelFactory {
-        return InjectableViewModelFactory(instances)
+        return InjectableViewModelFactory(instances).apply {
+            instances.keys.forEach { clazz -> create(clazz) } // load dependency graph for each view model class
+        }
     }
 
     @Provides

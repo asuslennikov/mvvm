@@ -50,15 +50,13 @@ class TaskApplication : Application(), ComponentRegistry {
             .domainDependencies(dataProvider)
             .build()
 
-        val appComponent = DaggerApplicationComponent.builder()
+        return DaggerApplicationComponent.builder()
             .applicationModule(appModule)
             .dataProvider(dataProvider)
             .domainProvider(domainProvider)
-            .build()
-        // pre-fill dependency graph
-        appComponent.getViewModelProvider()
-
-        return appComponent
+            .build().apply {
+                getViewModelProvider()
+            }
     }
 
     private fun afterComponentRegistryInitialized(componentRegistry: ComponentRegistry) {

@@ -15,16 +15,16 @@ class SplashViewModel(private val app: TaskApplication) : AbstractViewModel<Spla
         disposable.add(Observable.combineLatest(
             applicationLoading(),
             minimalLoading(),
-            BiFunction { l1: TaskApplication.InitializationStatus, _: TaskApplication.InitializationStatus -> l1 }
+            BiFunction { l1: TaskApplication.InitializationStatus, _: Long -> l1 }
         ).subscribe { onLoadingCompleted() })
     }
 
-    private fun minimalLoading(): Observable<TaskApplication.InitializationStatus> {
+    private fun minimalLoading(): Observable<Long> {
         return Observable.timer(app.resources.getInteger(R.integer.splash_visibility_minimum_duration).toLong(), TimeUnit.MILLISECONDS)
-            .map { TaskApplication.InitializationStatus.COMPLETE }
     }
 
-    private fun applicationLoading(): Observable<TaskApplication.InitializationStatus> = app.getInitializationStatus()
+    private fun applicationLoading(): Observable<TaskApplication.InitializationStatus> =
+        app.getInitializationStatus().filter { TaskApplication.InitializationStatus.COMPLETE == it }
 
     private fun onLoadingCompleted() {
         sendState(SplashState(false))
