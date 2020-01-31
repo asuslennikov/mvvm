@@ -30,6 +30,15 @@ abstract class BoundViewHolder<STATE : ListItemState, VM : ViewModel<STATE>, B :
         if (screenVariableId != NO_ACTUAL_ID) {
             binding.setVariable(screenVariableId, this)
         }
+        itemView.addOnAttachStateChangeListener(object : View.OnAttachStateChangeListener {
+            override fun onViewDetachedFromWindow(v: View?) {
+                disposable.clear()
+            }
+
+            override fun onViewAttachedToWindow(v: View?) {
+                // do nothing
+            }
+        })
     }
 
     open fun bind(state: STATE) {
