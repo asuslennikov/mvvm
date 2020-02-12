@@ -17,14 +17,10 @@ abstract class Fragment<STATE : State, VM : ViewModel<STATE>, B : ViewDataBindin
 
     override fun getBindingStateVariableId(): Int = BR.state
 
-    protected fun getViewModelProvider(): ViewModelProvider {
-        return ((context?.applicationContext as? ComponentRegistry)?.getViewModelProvider()
+    protected fun getViewModelProvider(): ViewModelProvider =
+        ((context?.applicationContext as? ComponentRegistry)?.getViewModelProvider()
             ?: throw RuntimeException("Can't retrieve a ViewModel provider"))
-    }
 
-    override fun createViewModel(): VM {
-        val viewModelProvider = getViewModelProvider()
-        return viewModelProvider.getViewModel(this, viewModelClass)
-    }
-
+    override fun createViewModel(): VM =
+        getViewModelProvider().getViewModel(this, viewModelClass)
 }

@@ -15,12 +15,14 @@ import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
+import org.threeten.bp.Clock
 import javax.inject.Provider
 
 @Module(includes = [ApplicationModule.ViewModelBindingsModule::class])
 class ApplicationModule(private val application: Context) : DataDependencies {
 
     @Provides
+    @ApplicationScope
     override fun getContext(): Context {
         return application
     }
@@ -38,6 +40,10 @@ class ApplicationModule(private val application: Context) : DataDependencies {
     fun viewModelProvider(viewModelFactory: ViewModelFactory): ViewModelProvider {
         return AndroidXViewModelProvider(viewModelFactory)
     }
+
+    @Provides
+    @ApplicationScope
+    fun clock() = Clock.systemDefaultZone()
 
     @Module
     internal interface ViewModelBindingsModule {

@@ -1,7 +1,7 @@
 package com.github.asuslennikov.taskman.domain
 
-import io.reactivex.Single
+import io.reactivex.Observable
 
 interface TaskRepository {
-    fun getTaskById(id: Long): Single<Long>
+    fun getTasks(): Observable<List<Task>>
 }

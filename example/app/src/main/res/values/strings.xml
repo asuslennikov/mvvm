@@ -2,5 +2,8 @@
     <string name="app_name">TaskMan</string>
     <string name="splash_application_name">@string/app_name</string>
     <string name="tasks_list_plus_button_description">Add new task</string>
+    <string name="tasks_list_today_header">Today</string>
+    <string name="tasks_list_yesterday_header">Yesterday</string>
+    <string name="tasks_list_any_day_header_format">dd-MM-yyyy</string>
     <string name="task_card_edit_button_description">Edit the task</string>
 </resources>
