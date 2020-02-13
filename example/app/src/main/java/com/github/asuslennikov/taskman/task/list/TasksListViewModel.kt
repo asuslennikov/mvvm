@@ -51,17 +51,15 @@ class TasksListViewModel @Inject constructor(
     private fun onTasksLoaded(tasks: List<Task>): TasksListState {
         val today = ZonedDateTime.now(clock).withHour(0).withMinute(0).withSecond(0).withNano(0)
         val yesterday = today.minusDays(1)
-        val tasksPerDay = HashMap<String, MutableList<TaskItemState>>()
+        val tasksPerDay = LinkedHashMap<String, MutableList<TaskItemState>>()
         tasks.forEach { task ->
-            val taskDayLabel = if (task.date.isAfter(today)) {
-                todayListHeader
-            } else if (task.date.isAfter(yesterday)) {
-                yesterdayListHeader
-            } else {
-                task.date.format(anyDayListHeaderFormatter)
+            val taskDayLabel = when {
+                task.date.isAfter(today) -> todayListHeader
+                task.date.isAfter(yesterday) -> yesterdayListHeader
+                else -> task.date.format(anyDayListHeaderFormatter)
             }
             tasksPerDay[taskDayLabel] = (tasksPerDay[taskDayLabel] ?: ArrayList()).apply {
-                add(TaskItemState(task.taskId, task.title, false))
+                add(TaskItemState(task.taskId, task.title, task.completed))
             }
         }
         return TasksListState(ArrayList<ListItemState>().apply {

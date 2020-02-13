@@ -9,6 +9,7 @@ class TaskEntityMapper {
             entity.taskId,
             entity.title,
             entity.description,
-            entity.date
+            entity.date,
+            entity.completed
         )
 }

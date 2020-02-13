@@ -18,6 +18,6 @@ interface TaskDao {
     @Query("SELECT * from task WHERE taskId = :id")
     fun getById(id: Long): TaskEntity?
 
-    @Query("SELECT * FROM task")
+    @Query("SELECT * FROM task ORDER BY timestamp DESC")
     fun getTasks(): Observable<List<TaskEntity>>
 }

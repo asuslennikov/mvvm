@@ -58,7 +58,7 @@ class TaskApplication : Application(), ComponentRegistry {
             .dataProvider(dataProvider)
             .domainProvider(domainProvider)
             .build().apply {
-                getViewModelProvider()
+                getViewModelProvider() // it's important to trigger graph chain creation
             }
     }
 

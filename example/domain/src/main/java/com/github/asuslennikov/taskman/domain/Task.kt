@@ -6,5 +6,6 @@ data class Task(
     var taskId: Long,
     val title: String,
     val description: String,
-    val date: ZonedDateTime
+    val date: ZonedDateTime,
+    val completed: Boolean
 )
