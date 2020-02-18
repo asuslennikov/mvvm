@@ -1,20 +1,27 @@
 package com.github.asuslennikov.taskman.task.card
 
+import android.content.Context
 import com.github.asuslennikov.mvvm.api.domain.UseCaseOutput
 import com.github.asuslennikov.mvvm.presentation.AbstractViewModel
 import com.github.asuslennikov.taskman.domain.Task
 import com.github.asuslennikov.taskman.domain.task.GetTaskByIdInput
 import com.github.asuslennikov.taskman.domain.task.GetTaskByIdUseCase
-import org.threeten.bp.ZonedDateTime
+import com.github.asuslennikov.taskman.task.TaskDateMapper
+import org.threeten.bp.Clock
 import javax.inject.Inject
 
 class TaskCardViewModel @Inject constructor(
+    context: Context,
+    clock: Clock,
     private val getByIdUseCase: GetTaskByIdUseCase
 ) : AbstractViewModel<TaskCardState>() {
+
+    private val dateMapper = TaskDateMapper(context, clock)
+
     override fun buildInitialState(): TaskCardState = throw RuntimeException("Never build a state out of scratch. Id must be passed from outside")
 
     private fun emptyState(taskId: Long) =
-        TaskCardState(taskId, "", "", ZonedDateTime.now())
+        TaskCardState(taskId, "", "", "")
 
     override fun mergeState(currentState: TaskCardState?, savedState: TaskCardState?): TaskCardState =
         savedState?.let {
@@ -45,9 +52,9 @@ class TaskCardViewModel @Inject constructor(
             ))
     }
 
-    private fun onTaskLoaded(task: Task) : TaskCardState =
+    private fun onTaskLoaded(task: Task): TaskCardState =
         task.run {
-            TaskCardState(taskId, title, description, date)
+            TaskCardState(taskId, title, description, dateMapper.mapTaskDateToLabel(date))
         }
 
     fun onEditTaskClick() {

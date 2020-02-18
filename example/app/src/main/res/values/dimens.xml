@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="big_header_text_size">32sp</dimen>
+    <dimen name="header_text_size">24sp</dimen>
     <dimen name="normal_text_size">16sp</dimen>
 
     <dimen name="half_normal_padding">8dp</dimen>
+    <dimen name="normal_padding">16dp</dimen>
+
+    <dimen name="half_normal_margin">8dp</dimen>
     <dimen name="normal_margin">16dp</dimen>
 
     <integer name="splash_visibility_minimum_duration">1500</integer>

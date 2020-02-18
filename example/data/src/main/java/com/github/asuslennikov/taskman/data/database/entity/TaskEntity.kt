@@ -8,13 +8,13 @@ import org.threeten.bp.ZonedDateTime
 @Entity(tableName = "task")
 data class TaskEntity(
     @PrimaryKey(autoGenerate = true)
-    var taskId: Long = 0L,
+    var taskId: Long = 0,
     @ColumnInfo(name = "title")
-    val title: String = "",
+    val title: String,
     @ColumnInfo(name = "description")
-    val description: String = "",
+    val description: String,
     @ColumnInfo(name = "timestamp")
-    val date: ZonedDateTime = ZonedDateTime.now(),
+    val date: ZonedDateTime,
     @ColumnInfo(name = "completed")
     val completed: Boolean = false
 )

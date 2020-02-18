@@ -6,4 +6,6 @@
     <string name="tasks_list_yesterday_header">Yesterday</string>
     <string name="tasks_list_any_day_header_format">dd-MM-yyyy</string>
     <string name="task_card_edit_button_description">Edit the task</string>
+    <string name="task_card_date">Planned at: %s</string>
+    <string name="task_list_title">Task list</string>
 </resources>
