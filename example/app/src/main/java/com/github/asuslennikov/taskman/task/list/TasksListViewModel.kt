@@ -61,6 +61,6 @@ class TasksListViewModel @Inject constructor(
     }
 
     fun onAddTaskClick() {
-
+        sendEffect(OpenAddTaskScreenEffect())
     }
 }

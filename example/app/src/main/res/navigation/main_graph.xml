@@ -21,6 +21,9 @@
         <action
             android:id="@+id/action_tasksList_to_taskCard"
             app:destination="@id/taskCard" />
+        <action
+            android:id="@+id/action_tasksList_to_addTask"
+            app:destination="@id/addTask" />
     </fragment>
     <fragment
         android:id="@+id/taskCard"
@@ -31,4 +34,8 @@
             app:argType="long"
             android:defaultValue="0L" />
     </fragment>
+    <fragment
+        android:id="@+id/addTask"
+        android:name="com.github.asuslennikov.taskman.task.add.AddTaskScreen"
+        android:label="AddTask" />
 </navigation>
