@@ -18,6 +18,58 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <ProgressBar
+            android:id="@+id/task_card_progress"
+            android:layout_width="@dimen/task_card_icon_size"
+            android:layout_height="@dimen/task_card_icon_size"
+            android:layout_margin="@dimen/normal_margin"
+            android:indeterminate="true"
+            android:visibility="@{state.loading}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="gone" />
+
+        <TextView
+            android:id="@+id/task_card_loading"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/normal_margin"
+            android:gravity="center_horizontal"
+            android:text="@string/task_card_loading"
+            android:textSize="@dimen/header_text_size"
+            android:visibility="@{state.loading}"
+            app:layout_constraintEnd_toEndOf="@id/task_card_progress"
+            app:layout_constraintStart_toStartOf="@id/task_card_progress"
+            app:layout_constraintTop_toBottomOf="@id/task_card_progress"
+            tools:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/task_card_error_icon"
+            android:layout_width="@dimen/task_card_icon_size"
+            android:layout_height="@dimen/task_card_icon_size"
+            android:layout_margin="@dimen/normal_margin"
+            app:srcCompat="@drawable/ic_error"
+            android:visibility="@{state.failed}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="gone" />
+
+        <TextView
+            android:id="@+id/task_card_error_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/normal_margin"
+            android:gravity="center_horizontal"
+            android:text="@string/task_card_error_text"
+            android:textSize="@dimen/header_text_size"
+            android:visibility="@{state.failed}"
+            app:layout_constraintEnd_toEndOf="@id/task_card_progress"
+            app:layout_constraintStart_toStartOf="@id/task_card_progress"
+            app:layout_constraintTop_toBottomOf="@id/task_card_progress"
+            tools:visibility="gone" />
+
         <TextView
             android:id="@+id/task_card_title"
             android:layout_width="match_parent"
@@ -25,6 +77,7 @@
             android:layout_margin="@dimen/normal_margin"
             android:text="@{state.title}"
             android:textSize="@dimen/header_text_size"
+            android:visibility="@{state.completed}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Complete the example project" />
@@ -36,6 +89,7 @@
             android:layout_margin="@dimen/normal_margin"
             android:text="@{state.description}"
             android:textSize="@dimen/normal_text_size"
+            android:visibility="@{state.descriptionVisibility}"
             app:layout_constraintEnd_toEndOf="@id/task_card_title"
             app:layout_constraintStart_toStartOf="@id/task_card_title"
             app:layout_constraintTop_toBottomOf="@id/task_card_title"
@@ -48,6 +102,7 @@
             android:layout_margin="@dimen/normal_margin"
             android:text="@{@string/task_card_date(state.date)}"
             android:textSize="@dimen/normal_text_size"
+            android:visibility="@{state.dateVisibility}"
             app:layout_constraintEnd_toEndOf="@id/task_card_description"
             app:layout_constraintStart_toStartOf="@id/task_card_description"
             app:layout_constraintTop_toBottomOf="@id/task_card_description"
@@ -60,6 +115,7 @@
             android:layout_margin="@dimen/normal_margin"
             android:contentDescription="@string/task_card_edit_button_description"
             android:onClick="@{() -> viewModel.onEditTaskClick()}"
+            android:visibility="@{state.completed}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:srcCompat="@drawable/ic_edit" />

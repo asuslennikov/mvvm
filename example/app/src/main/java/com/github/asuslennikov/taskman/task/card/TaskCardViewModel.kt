@@ -20,13 +20,12 @@ class TaskCardViewModel @Inject constructor(
 
     override fun buildInitialState(): TaskCardState = throw RuntimeException("Never build a state out of scratch. Id must be passed from outside")
 
-    private fun emptyState(taskId: Long) =
-        TaskCardState(taskId, "", "", "")
+    private fun loadingState(taskId: Long) = TaskCardState.loading(taskId)
 
     override fun mergeState(currentState: TaskCardState?, savedState: TaskCardState?): TaskCardState =
         savedState?.let {
             loadTask(it.id)
-            emptyState(it.id)
+            loadingState(it.id)
         } ?: throw RuntimeException("Initial state with id should be provided for this viewModel")
 
 
@@ -35,7 +34,7 @@ class TaskCardViewModel @Inject constructor(
             .subscribe(
                 { result ->
                     when (result.status) {
-                        UseCaseOutput.Status.IN_PROGRESS -> sendState(emptyState(taskId))
+                        UseCaseOutput.Status.IN_PROGRESS -> sendState(loadingState(taskId))
                         UseCaseOutput.Status.SUCCESS -> {
                             if (result.found) {
                                 result.task?.also { sendState(onTaskLoaded(it)) }
@@ -43,7 +42,7 @@ class TaskCardViewModel @Inject constructor(
 
                             }
                         }
-                        UseCaseOutput.Status.FAILURE -> sendState(emptyState(taskId))
+                        UseCaseOutput.Status.FAILURE -> sendState(loadingState(taskId))
                     }
                 },
                 { error ->
@@ -54,7 +53,7 @@ class TaskCardViewModel @Inject constructor(
 
     private fun onTaskLoaded(task: Task): TaskCardState =
         task.run {
-            TaskCardState(taskId, title, description, dateMapper.mapTaskDateToLabel(date))
+            TaskCardState.result(taskId, title, description, dateMapper.mapTaskDateToLabel(date))
         }
 
     fun onEditTaskClick() {
