@@ -10,4 +10,9 @@
     <string name="task_card_error_text">Oops, error…</string>
     <string name="task_card_date">Planned at: %s</string>
     <string name="task_card_edit_button_description">Edit the task</string>
+    <string name="add_task_header">Create a task</string>
+    <string name="add_task_title_label">Task title:</string>
+    <string name="add_task_description_label">Description:</string>
+    <string name="add_task_date_label">Planned at:</string>
+    <string name="add_task_save_button_description">Save the task</string>
 </resources>

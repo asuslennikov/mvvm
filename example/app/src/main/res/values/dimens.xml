@@ -10,9 +10,13 @@
 
     <dimen name="half_normal_padding">8dp</dimen>
     <dimen name="normal_padding">16dp</dimen>
+    <dimen name="one_and_half_padding">24dp</dimen>
+    <dimen name="double_padding">32dp</dimen>
 
     <dimen name="half_normal_margin">8dp</dimen>
     <dimen name="normal_margin">16dp</dimen>
+    <dimen name="one_and_half_margin">24dp</dimen>
+    <dimen name="double_margin">32dp</dimen>
 
     <dimen name="task_card_icon_size">60dp</dimen>
 </resources>

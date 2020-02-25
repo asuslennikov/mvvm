@@ -11,6 +11,7 @@ class TaskDateMapper(context: Context, private val clock: Clock) {
     private val yesterdayListHeader = context.getString(R.string.tasks_list_yesterday_header)
     private val anyDayListHeaderFormatter = DateTimeFormatter.ofPattern(context.getString(R.string.tasks_list_any_day_header_format))
 
+    private lateinit var tomorrow: ZonedDateTime
     private lateinit var today: ZonedDateTime
     private lateinit var yesterday: ZonedDateTime
 
@@ -19,12 +20,14 @@ class TaskDateMapper(context: Context, private val clock: Clock) {
     }
 
     fun refreshTodayReference() {
-        today = ZonedDateTime.now(clock).withHour(0).withMinute(0).withSecond(0).withNano(0)
+        tomorrow = ZonedDateTime.now(clock).plusDays(1).withHour(0).withMinute(0).withSecond(0).withNano(0)
+        today = tomorrow.minusDays(1)
         yesterday = today.minusDays(1)
     }
 
     fun mapTaskDateToLabel(date: ZonedDateTime): String =
         when {
+            date.isAfter(tomorrow) -> date.format(anyDayListHeaderFormatter)
             date.isAfter(today) -> todayListHeader
             date.isAfter(yesterday) -> yesterdayListHeader
             else -> date.format(anyDayListHeaderFormatter)
