@@ -3,7 +3,7 @@ package com.github.asuslennikov.taskman.domain
 import io.reactivex.Observable
 import io.reactivex.Single
 
-interface TaskRepository {
+interface TaskManager {
     fun getTasks(): Observable<List<Task>>
 
     fun getTask(id: Long): Single<Task>

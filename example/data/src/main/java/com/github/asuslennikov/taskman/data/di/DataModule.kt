@@ -4,11 +4,11 @@ import android.content.Context
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.github.asuslennikov.taskman.data.TaskRepositoryImpl
+import com.github.asuslennikov.taskman.data.TaskManagerImpl
 import com.github.asuslennikov.taskman.data.database.TaskDao
 import com.github.asuslennikov.taskman.data.database.TaskmanDatabase
 import com.github.asuslennikov.taskman.data.database.entity.TaskEntity
-import com.github.asuslennikov.taskman.domain.TaskRepository
+import com.github.asuslennikov.taskman.domain.TaskManager
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -93,6 +93,6 @@ object DataModule {
 
         @Binds
         @DataScope
-        fun bindsTaskRepository(impl: TaskRepositoryImpl): TaskRepository
+        fun bindsTaskRepository(impl: TaskManagerImpl): TaskManager
     }
 }

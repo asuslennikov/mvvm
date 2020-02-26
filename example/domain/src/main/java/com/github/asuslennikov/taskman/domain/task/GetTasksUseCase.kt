@@ -3,11 +3,11 @@ package com.github.asuslennikov.taskman.domain.task
 import com.github.asuslennikov.mvvm.domain.AbstractUseCase
 import com.github.asuslennikov.mvvm.domain.EmptyUseCaseInput
 import com.github.asuslennikov.mvvm.domain.UseCaseExecution
-import com.github.asuslennikov.taskman.domain.TaskRepository
+import com.github.asuslennikov.taskman.domain.TaskManager
 import javax.inject.Inject
 
 class GetTasksUseCase @Inject constructor(
-    private val taskRepository: TaskRepository
+    private val taskManager: TaskManager
 ) : AbstractUseCase<EmptyUseCaseInput, GetTasksOutput>() {
 
     override fun getUseCaseOutput(useCaseInput: EmptyUseCaseInput) = GetTasksOutput(emptyList())
@@ -17,7 +17,7 @@ class GetTasksUseCase @Inject constructor(
         execution: UseCaseExecution<EmptyUseCaseInput, GetTasksOutput>
     ) {
         execution.notifyProgress()
-        execution.joinTask("getTasks", taskRepository.getTasks()
+        execution.joinTask("getTasks", taskManager.getTasks()
             .subscribe(
                 { tasks ->
                     execution.notifySuccess(GetTasksOutput(tasks))
