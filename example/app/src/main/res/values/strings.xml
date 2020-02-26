@@ -15,4 +15,11 @@
     <string name="add_task_description_label">Description:</string>
     <string name="add_task_date_label">Planned at:</string>
     <string name="add_task_save_button_description">Save the task</string>
+    <string name="edit_task_loading">@string/task_card_loading</string>
+    <string name="edit_task_error_text">@string/task_card_error_text</string>
+    <string name="edit_task_header">Edit task</string>
+    <string name="edit_task_title_label">@string/add_task_title_label</string>
+    <string name="edit_task_description_label">@string/add_task_description_label</string>
+    <string name="edit_task_date_label">@string/add_task_date_label</string>
+    <string name="edit_task_save_button_description">Save the task</string>
 </resources>

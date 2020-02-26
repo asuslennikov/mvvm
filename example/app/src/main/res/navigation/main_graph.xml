@@ -31,11 +31,24 @@
         android:label="TaskCardScreen">
         <argument
             android:name="taskId"
-            app:argType="long"
-            android:defaultValue="0L" />
+            android:defaultValue="0L"
+            app:argType="long" />
+        <action
+            android:id="@+id/action_taskCard_to_editTask"
+            app:destination="@id/editTask" />
     </fragment>
     <fragment
         android:id="@+id/addTask"
         android:name="com.github.asuslennikov.taskman.task.add.AddTaskScreen"
         android:label="AddTask" />
+
+    <fragment
+        android:id="@+id/editTask"
+        android:name="com.github.asuslennikov.taskman.task.edit.EditTaskScreen"
+        android:label="EditTask">
+        <argument
+            android:name="taskId"
+            android:defaultValue="0L"
+            app:argType="long" />
+    </fragment>
 </navigation>

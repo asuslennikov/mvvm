@@ -9,6 +9,7 @@ import com.github.asuslennikov.mvvm.presentation.di.InjectableViewModelFactory
 import com.github.asuslennikov.taskman.data.di.DataDependencies
 import com.github.asuslennikov.taskman.task.add.AddTaskViewModel
 import com.github.asuslennikov.taskman.task.card.TaskCardViewModel
+import com.github.asuslennikov.taskman.task.edit.EditTaskViewModel
 import com.github.asuslennikov.taskman.task.list.TasksListViewModel
 import com.github.asuslennikov.taskman.task.list.item.DateHeaderViewModel
 import com.github.asuslennikov.taskman.task.list.item.TaskItemViewModel
@@ -79,5 +80,10 @@ class ApplicationModule(private val application: Context) : DataDependencies {
         @IntoMap
         @ViewModelKey(AddTaskViewModel::class)
         fun bindsAddTaskViewModel(instance: AddTaskViewModel): ViewModel<*>
+
+        @Binds
+        @IntoMap
+        @ViewModelKey(EditTaskViewModel::class)
+        fun bindsEditTaskViewModel(instance: EditTaskViewModel): ViewModel<*>
     }
 }

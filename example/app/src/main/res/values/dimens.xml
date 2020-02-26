@@ -19,4 +19,6 @@
     <dimen name="double_margin">32dp</dimen>
 
     <dimen name="task_card_icon_size">60dp</dimen>
+
+    <dimen name="edit_task_icon_size">@dimen/task_card_icon_size</dimen>
 </resources>

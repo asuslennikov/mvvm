@@ -9,4 +9,6 @@ interface TaskManager {
     fun getTask(id: Long): Single<Task>
 
     fun createTask(task: Task): Single<Task>
+
+    fun updateTask(task: Task): Single<Task>
 }

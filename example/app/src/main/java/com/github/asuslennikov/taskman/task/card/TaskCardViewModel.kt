@@ -39,10 +39,10 @@ class TaskCardViewModel @Inject constructor(
                             if (result.found) {
                                 result.task?.also { sendState(onTaskLoaded(it)) }
                             } else {
-
+                                sendState(TaskCardState.error(taskId))
                             }
                         }
-                        UseCaseOutput.Status.FAILURE -> sendState(loadingState(taskId))
+                        UseCaseOutput.Status.FAILURE -> sendState(TaskCardState.error(taskId))
                     }
                 },
                 { error ->
@@ -57,6 +57,6 @@ class TaskCardViewModel @Inject constructor(
         }
 
     fun onEditTaskClick() {
-
+        sendEffect(OpenTaskEditScreenEffect(currentState.id))
     }
 }

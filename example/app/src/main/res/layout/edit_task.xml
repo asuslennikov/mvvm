@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="state"
+            type="com.github.asuslennikov.taskman.task.edit.EditTaskState" />
+
+        <variable
+            name="viewModel"
+            type="com.github.asuslennikov.taskman.task.edit.EditTaskViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ProgressBar
+            android:id="@+id/edit_task_progress"
+            android:layout_width="@dimen/edit_task_icon_size"
+            android:layout_height="@dimen/edit_task_icon_size"
+            android:layout_margin="@dimen/normal_margin"
+            android:indeterminate="true"
+            android:visibility="@{state.loading}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="gone" />
+
+        <TextView
+            android:id="@+id/edit_task_loading"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/normal_margin"
+            android:gravity="center_horizontal"
+            android:text="@string/edit_task_loading"
+            android:textSize="@dimen/header_text_size"
+            android:visibility="@{state.loading}"
+            app:layout_constraintEnd_toEndOf="@id/edit_task_progress"
+            app:layout_constraintStart_toStartOf="@id/edit_task_progress"
+            app:layout_constraintTop_toBottomOf="@id/edit_task_progress"
+            tools:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/edit_task_error_icon"
+            android:layout_width="@dimen/edit_task_icon_size"
+            android:layout_height="@dimen/edit_task_icon_size"
+            android:layout_margin="@dimen/normal_margin"
+            android:visibility="@{state.failed}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_error"
+            tools:visibility="gone" />
+
+        <TextView
+            android:id="@+id/edit_task_error_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/normal_margin"
+            android:gravity="center_horizontal"
+            android:text="@string/edit_task_error_text"
+            android:textSize="@dimen/header_text_size"
+            android:visibility="@{state.failed}"
+            app:layout_constraintEnd_toEndOf="@id/edit_task_progress"
+            app:layout_constraintStart_toStartOf="@id/edit_task_progress"
+            app:layout_constraintTop_toBottomOf="@id/edit_task_progress"
+            tools:visibility="gone" />
+
+        <TextView
+            android:id="@+id/edit_task_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/normal_margin"
+            android:text="@string/edit_task_header"
+            android:textSize="@dimen/header_text_size"
+            android:visibility="@{state.completed}"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/edit_task_title_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/normal_margin"
+            android:text="@string/edit_task_title_label"
+            android:visibility="@{state.completed}"
+            app:layout_constraintStart_toStartOf="@id/edit_task_header"
+            app:layout_constraintTop_toBottomOf="@id/edit_task_header" />
+
+        <EditText
+            android:id="@+id/edit_task_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/normal_margin"
+            android:lines="1"
+            android:text="@{state.title}"
+            android:visibility="@{state.completed}"
+            app:layout_constraintStart_toStartOf="@id/edit_task_title_label"
+            app:layout_constraintTop_toBottomOf="@id/edit_task_title_label" />
+
+        <TextView
+            android:id="@+id/edit_task_description_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/normal_margin"
+            android:layout_marginTop="@dimen/one_and_half_margin"
+            android:text="@string/edit_task_description_label"
+            android:visibility="@{state.completed}"
+            app:layout_constraintStart_toStartOf="@id/edit_task_title"
+            app:layout_constraintTop_toBottomOf="@id/edit_task_title" />
+
+        <EditText
+            android:id="@+id/edit_task_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/normal_margin"
+            android:text="@{state.description}"
+            android:visibility="@{state.completed}"
+            app:layout_constraintStart_toStartOf="@id/edit_task_description_label"
+            app:layout_constraintTop_toBottomOf="@id/edit_task_description_label" />
+
+        <TextView
+            android:id="@+id/edit_task_date_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/normal_margin"
+            android:layout_marginTop="@dimen/one_and_half_margin"
+            android:text="@string/edit_task_date_label"
+            android:visibility="@{state.completed}"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/edit_task_description" />
+
+        <TextView
+            android:id="@+id/edit_task_date"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/normal_margin"
+            android:layout_marginEnd="@dimen/normal_margin"
+            android:onClick="@{() -> viewModel.onDateClicked()}"
+            android:text="@{state.formattedDate}"
+            android:textColor="@color/colorAccent"
+            android:visibility="@{state.completed}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/edit_task_date_label"
+            app:layout_constraintTop_toTopOf="@id/edit_task_date_label"
+            tools:text="Today" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/task_card_edit_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/normal_margin"
+            android:contentDescription="@string/edit_task_save_button_description"
+            android:onClick="@{() -> viewModel.onSaveTaskClick()}"
+            android:visibility="@{state.completed}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:srcCompat="@drawable/ic_apply" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

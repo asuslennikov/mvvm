@@ -35,4 +35,11 @@ class TaskManagerImpl @Inject constructor(
             taskDao.getById(id)
         }
             .map { entity -> taskMapper.fromEntity(entity) }
+
+    override fun updateTask(task: Task): Single<Task> =
+        Single.fromCallable {
+            taskDao.update(taskMapper.toEntity(task))
+            taskDao.getById(task.taskId)
+        }
+            .map { entity -> taskMapper.fromEntity(entity) }
 }
