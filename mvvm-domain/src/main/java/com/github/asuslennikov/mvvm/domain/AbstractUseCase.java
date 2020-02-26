@@ -61,10 +61,12 @@ public abstract class AbstractUseCase<IN extends UseCaseInput,
      * <p></p>
      * This method can be called more than once per execution.
      *
+     * @param useCaseInput an input information from the current execution, which can be helpful to
+     *                     construct an output result
      * @return an instance for output results
      */
     @NonNull
-    protected abstract OUT getUseCaseOutput();
+    protected abstract OUT getUseCaseOutput(@NonNull IN useCaseInput);
 
-    protected abstract void doExecute(@NonNull IN useCaseInput, @NonNull UseCaseExecution<OUT> execution);
+    protected abstract void doExecute(@NonNull IN useCaseInput, @NonNull UseCaseExecution<IN, OUT> execution);
 }

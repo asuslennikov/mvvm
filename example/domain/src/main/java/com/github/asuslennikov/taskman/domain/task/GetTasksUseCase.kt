@@ -10,9 +10,12 @@ class GetTasksUseCase @Inject constructor(
     private val taskRepository: TaskRepository
 ) : AbstractUseCase<EmptyUseCaseInput, GetTasksOutput>() {
 
-    override fun getUseCaseOutput() = GetTasksOutput(emptyList())
+    override fun getUseCaseOutput(useCaseInput: EmptyUseCaseInput) = GetTasksOutput(emptyList())
 
-    override fun doExecute(useCaseInput: EmptyUseCaseInput, execution: UseCaseExecution<GetTasksOutput>) {
+    override fun doExecute(
+        useCaseInput: EmptyUseCaseInput,
+        execution: UseCaseExecution<EmptyUseCaseInput, GetTasksOutput>
+    ) {
         execution.notifyProgress()
         execution.joinTask("getTasks", taskRepository.getTasks()
             .subscribe(

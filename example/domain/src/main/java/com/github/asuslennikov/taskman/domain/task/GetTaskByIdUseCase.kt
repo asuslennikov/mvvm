@@ -11,22 +11,25 @@ class GetTaskByIdUseCase @Inject constructor(
     private val taskRepository: TaskRepository
 ) : AbstractUseCase<GetTaskByIdInput, GetTaskByIdOutput>() {
 
-    override fun getUseCaseOutput(): GetTaskByIdOutput =
+    override fun getUseCaseOutput(useCaseInput: GetTaskByIdInput): GetTaskByIdOutput =
         GetTaskByIdOutput(null, false)
 
-    override fun doExecute(useCaseInput: GetTaskByIdInput, execution: UseCaseExecution<GetTaskByIdOutput>) {
+    override fun doExecute(
+        useCaseInput: GetTaskByIdInput,
+        execution: UseCaseExecution<GetTaskByIdInput, GetTaskByIdOutput>
+    ) {
         execution.notifyProgress()
-        execution.joinTask("getTaskById", taskRepository.getTask(useCaseInput.taskId)
-            .subscribe(
-                { task ->
-                    execution.notifySuccess(GetTaskByIdOutput(task, true))
-                },
-                { error ->
-                    execution.notifyFailure(GetTaskByIdOutput(null, false).apply {
-                        exception = error
-                    })
+        execution.joinTask(
+            "getTaskById", taskRepository.getTask(useCaseInput.taskId)
+                .subscribe(
+                    { task ->
+                        execution.notifySuccess(GetTaskByIdOutput(task, true))
+                    },
+                    { error ->
+                        execution.notifyFailure(GetTaskByIdOutput(null, false).apply {
+                            exception = error
+                        })
                 }
             ))
     }
-
 }

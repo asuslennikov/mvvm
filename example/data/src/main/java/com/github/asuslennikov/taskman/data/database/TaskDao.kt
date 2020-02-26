@@ -10,7 +10,7 @@ import io.reactivex.Observable
 @Dao
 interface TaskDao {
     @Insert
-    fun insert(task: TaskEntity)
+    fun insert(task: TaskEntity): Long
 
     @Update
     fun update(task: TaskEntity)

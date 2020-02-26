@@ -7,4 +7,6 @@ interface TaskRepository {
     fun getTasks(): Observable<List<Task>>
 
     fun getTask(id: Long): Single<Task>
+
+    fun createTask(task: Task): Single<Task>
 }

@@ -17,6 +17,7 @@ package com.github.asuslennikov.mvvm.domain;
 
 import androidx.annotation.NonNull;
 
+import com.github.asuslennikov.mvvm.api.domain.UseCaseInput;
 import com.github.asuslennikov.mvvm.api.domain.UseCaseOutput;
 
 import java.util.Map;
@@ -30,20 +31,23 @@ import io.reactivex.functions.Consumer;
 /**
  * Class defines contract for communication between current use case execution and subscribers.
  *
+ * @param <IN>  type of use case input information (successor of {@link UseCaseInput})
  * @param <OUT> result of use case's work (successor of {@link AbstractUseCaseOutput})
  */
-public final class UseCaseExecution<OUT extends AbstractUseCaseOutput> {
-    private final AbstractUseCase<?, OUT> useCase;
+public final class UseCaseExecution<IN extends UseCaseInput, OUT extends AbstractUseCaseOutput> {
+    private final AbstractUseCase<IN, OUT> useCase;
+    private final IN useCaseInput;
     private final ObservableEmitter<OUT> emitter;
     private Map<String, Disposable> disposables;
 
-    UseCaseExecution(AbstractUseCase<?, OUT> useCase, ObservableEmitter<OUT> emitter) {
+    UseCaseExecution(AbstractUseCase<IN, OUT> useCase, IN useCaseInput, ObservableEmitter<OUT> emitter) {
         this.useCase = useCase;
+        this.useCaseInput = useCaseInput;
         this.emitter = emitter;
     }
 
-    private OUT getUseCaseOutput() {
-        return useCase.getUseCaseOutput();
+    private OUT getUseCaseOutput(IN useCaseInput) {
+        return useCase.getUseCaseOutput(useCaseInput);
     }
 
     /**
@@ -60,10 +64,10 @@ public final class UseCaseExecution<OUT extends AbstractUseCaseOutput> {
     /**
      * Method sends notification for subscribers about start of execution.
      * (In fact it set the {@link UseCaseOutput.Status#IN_PROGRESS} status for output, received
-     * via {@link AbstractUseCase#getUseCaseOutput()}).
+     * via {@link AbstractUseCase#getUseCaseOutput(UseCaseInput)}).
      */
     public void notifyProgress() {
-        OUT useCaseOutput = getUseCaseOutput();
+        OUT useCaseOutput = getUseCaseOutput(useCaseInput);
         notifyProgress(useCaseOutput);
     }
 
@@ -82,10 +86,10 @@ public final class UseCaseExecution<OUT extends AbstractUseCaseOutput> {
     /**
      * Method sends notification for subscribers about completion of execution.
      * (In fact it set the {@link UseCaseOutput.Status#SUCCESS} status for output, received
-     * via {@link AbstractUseCase#getUseCaseOutput()}).
+     * via {@link AbstractUseCase#getUseCaseOutput(UseCaseInput)}).
      */
     public void notifySuccess() {
-        OUT useCaseOutput = getUseCaseOutput();
+        OUT useCaseOutput = getUseCaseOutput(useCaseInput);
         notifySuccess(useCaseOutput);
     }
 
@@ -104,10 +108,10 @@ public final class UseCaseExecution<OUT extends AbstractUseCaseOutput> {
     /**
      * Method sends notification for subscribers about failure of execution.
      * (In fact it set the {@link UseCaseOutput.Status#FAILURE} status for output, received
-     * via {@link AbstractUseCase#getUseCaseOutput()}).
+     * via {@link AbstractUseCase#getUseCaseOutput(UseCaseInput)}).
      */
     public void notifyFailure() {
-        OUT useCaseOutput = getUseCaseOutput();
+        OUT useCaseOutput = getUseCaseOutput(useCaseInput);
         useCaseOutput.setStatus(UseCaseOutput.Status.FAILURE);
         notify(useCaseOutput);
     }
@@ -127,12 +131,12 @@ public final class UseCaseExecution<OUT extends AbstractUseCaseOutput> {
     /**
      * Method sends notification for subscribers about failure of execution.
      * (In fact it set the {@link UseCaseOutput.Status#FAILURE} status for output, received
-     * via {@link AbstractUseCase#getUseCaseOutput()} and populate it with the given exception).
+     * via {@link AbstractUseCase#getUseCaseOutput(UseCaseInput)} and populate it with the given exception).
      *
      * @param ex exception, which was thrown during execution
      */
     public void notifyFailure(@NonNull Throwable ex) {
-        OUT useCaseOutput = getUseCaseOutput();
+        OUT useCaseOutput = getUseCaseOutput(useCaseInput);
         useCaseOutput.setStatus(UseCaseOutput.Status.FAILURE);
         useCaseOutput.setException(ex);
         notify(useCaseOutput);

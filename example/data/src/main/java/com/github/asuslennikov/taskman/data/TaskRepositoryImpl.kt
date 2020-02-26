@@ -22,7 +22,17 @@ class TaskRepositoryImpl @Inject constructor(
             }
 
     override fun getTask(id: Long): Single<Task> =
-        taskDao.getById(id)?.let {
-            Single.just(taskMapper.fromEntity(it))
-        } ?: Single.error(RuntimeException("Task with id=$id was not found"))
+        Single.just(Any())
+            .flatMap {
+                taskDao.getById(id)?.let {
+                    Single.just(taskMapper.fromEntity(it))
+                } ?: Single.error(RuntimeException("Task with id=$id was not found"))
+            }
+
+    override fun createTask(task: Task): Single<Task> =
+        Single.fromCallable {
+            val id = taskDao.insert(taskMapper.toEntity(task))
+            taskDao.getById(id)
+        }
+            .map { entity -> taskMapper.fromEntity(entity) }
 }

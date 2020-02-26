@@ -25,7 +25,7 @@ final class UseCaseObservableOnSubscribe<IN extends UseCaseInput,
 
     private final IN useCaseInput;
     private final AbstractUseCase<IN, OUT> useCase;
-    private UseCaseExecution<OUT> execution;
+    private UseCaseExecution<IN, OUT> execution;
 
     UseCaseObservableOnSubscribe(IN useCaseInput, AbstractUseCase<IN, OUT> useCase) {
         this.useCaseInput = useCaseInput;
@@ -34,7 +34,7 @@ final class UseCaseObservableOnSubscribe<IN extends UseCaseInput,
 
     @Override
     public void subscribe(ObservableEmitter<OUT> emitter) throws Exception {
-        execution = new UseCaseExecution<>(useCase, emitter);
+        execution = new UseCaseExecution<>(useCase, useCaseInput, emitter);
         try {
             useCase.doExecute(useCaseInput, execution);
         } catch (Throwable t) {

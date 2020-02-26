@@ -34,6 +34,7 @@ import io.reactivex.Observable;
 import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 
 /**
  * An implementation of {@link Screen} interface, which is linked with specific {@link ViewModel}
@@ -111,11 +112,11 @@ public abstract class FragmentScreen<STATE extends State, VM extends ViewModel<S
         if (viewModel == null) {
             throw new IllegalStateException("View model for this screen is not initialized");
         }
-        disposable.add(viewModel.getState(this)
+        disposeOnPause(viewModel.getState(this)
                 .throttleLatest(getUiThrottleIntervalInMillis(), TimeUnit.MILLISECONDS, true)
                 .observeOn(getScheduler())
                 .subscribe(this::render));
-        disposable.add(viewModel.getEffect(this)
+        disposeOnPause(viewModel.getEffect(this)
                 .throttleLatest(getUiThrottleIntervalInMillis(), TimeUnit.MILLISECONDS, true)
                 .observeOn(getScheduler())
                 .subscribe(this::applyEffect));
@@ -137,5 +138,18 @@ public abstract class FragmentScreen<STATE extends State, VM extends ViewModel<S
     @CallSuper
     public void render(@NonNull STATE screenState) {
         this.state = screenState;
+    }
+
+    /**
+     * Allows to collect a disposable, which should be cancelled when screen closes or goes to
+     * background (see the {@link #onPause()} method).
+     *
+     * @param disposable result of any subscription
+     * @return the same disposable, in case if we need store it
+     */
+    @NonNull
+    protected Disposable disposeOnPause(@NonNull Disposable disposable) {
+        this.disposable.add(disposable);
+        return disposable;
     }
 }
