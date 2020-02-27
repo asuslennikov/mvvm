@@ -8,6 +8,7 @@ import com.github.asuslennikov.taskman.di.ApplicationModule
 import com.github.asuslennikov.taskman.di.DaggerApplicationComponent
 import com.github.asuslennikov.taskman.domain.di.DaggerDomainComponent
 import com.github.asuslennikov.taskman.domain.di.DomainProvider
+import com.jakewharton.threetenabp.AndroidThreeTen
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -43,6 +44,7 @@ class TaskApplication : Application(), ComponentRegistry {
     }
 
     private fun createApplicationComponent(): ApplicationComponent {
+        AndroidThreeTen.init(this)
         val appModule = ApplicationModule(this)
 
         val dataProvider = DaggerDataComponent.builder()
