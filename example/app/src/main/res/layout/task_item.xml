@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
@@ -19,10 +20,11 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:padding="@dimen/half_normal_padding"
-        android:onClick="@{() -> viewModel.onTaskClick(screen)}"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:onClick="@{() -> viewModel.onTaskClick(screen)}"
+        android:padding="@dimen/half_normal_padding"
+        bind:onLongClick="@{()-> viewModel.onTaskLongClick(screen)}">
 
         <TextView
             android:id="@+id/task_item_title"

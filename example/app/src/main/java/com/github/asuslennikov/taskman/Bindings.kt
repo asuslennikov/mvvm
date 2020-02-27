@@ -11,4 +11,13 @@ object Bindings {
     fun bindImageDrawableResourceId(view: View, visibility: Boolean) {
         view.visibility = if (visibility) VISIBLE else GONE
     }
+
+    @JvmStatic
+    @BindingAdapter("onLongClick")
+    fun bindViewLongClickListener(view: View?, listener: Runnable?) {
+        view?.setOnLongClickListener listener@{
+            listener?.run()
+            return@listener true
+        }
+    }
 }

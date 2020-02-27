@@ -1,5 +1,6 @@
 package com.github.asuslennikov.taskman.domain
 
+import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
 
@@ -11,4 +12,6 @@ interface TaskManager {
     fun createTask(task: Task): Single<Task>
 
     fun updateTask(task: Task): Single<Task>
+
+    fun deleteTask(id: Long): Completable
 }

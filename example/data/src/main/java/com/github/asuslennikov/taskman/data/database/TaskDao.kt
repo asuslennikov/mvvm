@@ -1,9 +1,6 @@
 package com.github.asuslennikov.taskman.data.database
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.Query
-import androidx.room.Update
+import androidx.room.*
 import com.github.asuslennikov.taskman.data.database.entity.TaskEntity
 import io.reactivex.Observable
 
@@ -15,9 +12,12 @@ interface TaskDao {
     @Update
     fun update(task: TaskEntity)
 
-    @Query("SELECT * from task WHERE taskId = :id")
+    @Query("SELECT * FROM task WHERE taskId = :id")
     fun getById(id: Long): TaskEntity?
 
     @Query("SELECT * FROM task ORDER BY timestamp DESC")
     fun getTasks(): Observable<List<TaskEntity>>
+
+    @Delete
+    fun delete(task: TaskEntity)
 }
