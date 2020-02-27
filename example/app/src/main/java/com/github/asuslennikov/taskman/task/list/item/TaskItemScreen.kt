@@ -33,4 +33,8 @@ class TaskItemScreen(itemView: View, viewModel: TaskItemViewModel) :
             }
         }
     }
+
+    fun onItemSwiped() {
+        viewModel.onTaskSwiped(this)
+    }
 }

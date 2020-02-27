@@ -18,6 +18,6 @@ class TaskEntityMapper {
         task.title,
         task.description,
         task.date,
-        false
+        task.completed
     )
 }

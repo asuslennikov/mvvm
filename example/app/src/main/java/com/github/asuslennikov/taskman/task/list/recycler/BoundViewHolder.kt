@@ -13,7 +13,7 @@ import io.reactivex.disposables.CompositeDisposable
 
 abstract class BoundViewHolder<STATE : ListItemState, VM : ViewModel<STATE>, B : ViewDataBinding>(
     itemView: View,
-    private val viewModel: VM
+    protected val viewModel: VM
 ) : ViewHolder(itemView), Screen<STATE> {
 
     protected companion object {
