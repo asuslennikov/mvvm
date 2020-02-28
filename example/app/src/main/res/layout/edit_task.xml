@@ -81,47 +81,49 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/edit_task_title_label"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/edit_task_title_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/normal_margin"
-            android:text="@string/edit_task_title_label"
+            android:hint="@string/edit_task_title_label"
             android:visibility="@{state.completed}"
+            app:endIconMode="clear_text"
+            app:errorEnabled="false"
             app:layout_constraintStart_toStartOf="@id/edit_task_header"
-            app:layout_constraintTop_toBottomOf="@id/edit_task_header" />
+            app:layout_constraintTop_toBottomOf="@id/edit_task_header">
 
-        <EditText
-            android:id="@+id/edit_task_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/normal_margin"
-            android:lines="1"
-            android:text="@{state.title}"
-            android:visibility="@{state.completed}"
-            app:layout_constraintStart_toStartOf="@id/edit_task_title_label"
-            app:layout_constraintTop_toBottomOf="@id/edit_task_title_label" />
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edit_task_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:lines="1"
+                android:paddingStart="0dp"
+                android:paddingEnd="0dp"
+                android:text="@{state.title}" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <TextView
-            android:id="@+id/edit_task_description_label"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/edit_task_description_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/normal_margin"
             android:layout_marginTop="@dimen/one_and_half_margin"
-            android:text="@string/edit_task_description_label"
+            android:hint="@string/edit_task_description_label"
             android:visibility="@{state.completed}"
-            app:layout_constraintStart_toStartOf="@id/edit_task_title"
-            app:layout_constraintTop_toBottomOf="@id/edit_task_title" />
+            app:endIconMode="clear_text"
+            app:errorEnabled="false"
+            app:layout_constraintStart_toStartOf="@id/edit_task_title_container"
+            app:layout_constraintTop_toBottomOf="@id/edit_task_title_container">
 
-        <EditText
-            android:id="@+id/edit_task_description"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/normal_margin"
-            android:text="@{state.description}"
-            android:visibility="@{state.completed}"
-            app:layout_constraintStart_toStartOf="@id/edit_task_description_label"
-            app:layout_constraintTop_toBottomOf="@id/edit_task_description_label" />
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edit_task_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="0dp"
+                android:paddingEnd="0dp"
+                android:text="@{state.description}" />
+        </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
             android:id="@+id/edit_task_date_label"
@@ -132,7 +134,7 @@
             android:text="@string/edit_task_date_label"
             android:visibility="@{state.completed}"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/edit_task_description" />
+            app:layout_constraintTop_toBottomOf="@id/edit_task_description_container" />
 
         <TextView
             android:id="@+id/edit_task_date"

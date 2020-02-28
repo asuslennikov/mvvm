@@ -51,6 +51,7 @@ dependencies {
     implementation libraries.androidx_navigation_fragment
     implementation libraries.androidx_navigation_ui
     implementation libraries.jsr310
+    implementation libraries.google_material
 
     kapt libraries.dagger_compiler
 
