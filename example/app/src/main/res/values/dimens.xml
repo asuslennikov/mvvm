@@ -3,6 +3,7 @@
     <integer name="splash_visibility_minimum_duration">1500</integer>
     <integer name="splash_scale_animation_duration">800</integer>
     <integer name="splash_alpha_animation_duration">@integer/splash_scale_animation_duration</integer>
+    <integer name="common_circular_reveal_animation_duration">500</integer>
 
     <dimen name="big_header_text_size">32sp</dimen>
     <dimen name="header_text_size">24sp</dimen>

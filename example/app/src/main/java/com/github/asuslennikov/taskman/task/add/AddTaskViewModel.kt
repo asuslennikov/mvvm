@@ -23,6 +23,11 @@ class AddTaskViewModel @Inject constructor(
         return AddTaskState("", "", date, dateMapper.mapTaskDateToLabel(date))
     }
 
+    fun onBackPressed(): Boolean {
+        sendEffect(CloseAddTaskScreenEffect())
+        return true
+    }
+
     fun onSaveTaskClick() {
         currentState.apply {
             createTaskUseCase.execute(

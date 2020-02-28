@@ -4,17 +4,41 @@ import android.app.DatePickerDialog
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.View
+import android.view.View.GONE
 import android.widget.EditText
 import androidx.navigation.fragment.findNavController
 import com.github.asuslennikov.mvvm.api.presentation.Effect
 import com.github.asuslennikov.taskman.Fragment
 import com.github.asuslennikov.taskman.R
+import com.github.asuslennikov.taskman.ScreenAnimationUtils
 import com.github.asuslennikov.taskman.databinding.AddTaskBinding
 
 class AddTaskScreen : Fragment<AddTaskState, AddTaskViewModel, AddTaskBinding>(
     R.layout.add_task,
     AddTaskViewModel::class.java
 ) {
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding.addTaskSaveButton.addOnLayoutChangeListener(object : View.OnLayoutChangeListener {
+            override fun onLayoutChange(
+                v: View?, left: Int, top: Int, right: Int, bottom: Int,
+                oldLeft: Int, oldTop: Int, oldRight: Int, oldBottom: Int
+            ) {
+                v?.removeOnLayoutChangeListener(this)
+                ScreenAnimationUtils.startCircularRevealAnimation(
+                    ScreenAnimationUtils.AnimationData(
+                        binding.addTaskSaveButton,
+                        view,
+                        R.color.colorAccent,
+                        android.R.color.background_light,
+                        view.context.resources.getInteger(R.integer.common_circular_reveal_animation_duration).toLong()
+                    )
+                )
+            }
+        })
+    }
 
     override fun onActivityCreated(saved: Bundle?) {
         super.onActivityCreated(saved)
@@ -60,7 +84,23 @@ class AddTaskScreen : Fragment<AddTaskState, AddTaskViewModel, AddTaskBinding>(
         }
     }
 
+    override fun onBackPressed() = viewModel.onBackPressed()
+
     private fun closeScreen() {
-        findNavController().popBackStack()
+        view?.apply {
+            ScreenAnimationUtils.startCircularRevealAnimation(
+                ScreenAnimationUtils.AnimationData(
+                    binding.addTaskSaveButton,
+                    this,
+                    R.color.colorAccent,
+                    android.R.color.background_light,
+                    context.resources.getInteger(R.integer.common_circular_reveal_animation_duration).toLong(),
+                    true
+                )
+            ) {
+                it.targetView.visibility = GONE
+                findNavController().popBackStack()
+            }
+        }
     }
 }

@@ -11,6 +11,10 @@
         <action
             android:id="@+id/action_splashScreen_to_tasksListScreen"
             app:destination="@id/tasksList"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out"
             app:popUpTo="@id/main_graph"
             app:popUpToInclusive="true" />
     </fragment>
@@ -20,7 +24,11 @@
         android:label="TasksList">
         <action
             android:id="@+id/action_tasksList_to_taskCard"
-            app:destination="@id/taskCard" />
+            app:destination="@id/taskCard"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out" />
         <action
             android:id="@+id/action_tasksList_to_addTask"
             app:destination="@id/addTask" />

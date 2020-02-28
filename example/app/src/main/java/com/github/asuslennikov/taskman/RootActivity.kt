@@ -9,4 +9,16 @@ class RootActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.root)
     }
+
+    override fun onBackPressed() {
+        val navFragment = supportFragmentManager.fragments[0]
+        navFragment.childFragmentManager.fragments[0]
+            ?.takeIf { it is Fragment<*, *, *> }
+            ?.apply {
+                if (!(this as Fragment<*, *, *>).onBackPressed()) {
+                    super.onBackPressed()
+                }
+            }
+            ?: super.onBackPressed()
+    }
 }
