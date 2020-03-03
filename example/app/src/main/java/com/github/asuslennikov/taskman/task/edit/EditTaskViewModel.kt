@@ -96,8 +96,5 @@ class EditTaskViewModel @Inject constructor(
         sendState(currentState.copy(description = description))
     }
 
-    fun onBackPressed(): Boolean {
-        sendEffect(CloseEditTaskScreenEffect())
-        return true
-    }
+    fun onBackPressed() = sendEffect(CloseEditTaskScreenEffect())
 }

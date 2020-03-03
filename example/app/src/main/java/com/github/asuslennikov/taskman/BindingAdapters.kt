@@ -5,7 +5,7 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.databinding.BindingAdapter
 
-object Bindings {
+object BindingAdapters {
     @JvmStatic
     @BindingAdapter("android:visibility")
     fun bindImageDrawableResourceId(view: View, visibility: Boolean) {

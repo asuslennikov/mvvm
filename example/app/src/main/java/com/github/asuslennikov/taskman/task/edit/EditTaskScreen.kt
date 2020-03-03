@@ -1,8 +1,10 @@
 package com.github.asuslennikov.taskman.task.edit
 
 import android.app.DatePickerDialog
+import android.content.Context
 import android.os.Bundle
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.github.asuslennikov.mvvm.api.presentation.Effect
@@ -45,6 +47,13 @@ class EditTaskScreen : Fragment<EditTaskState, EditTaskViewModel, EditTaskBindin
         binding.editTaskDescription.onTextChange { viewModel.onDescriptionChanged(it) }
     }
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        requireActivity().onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() = viewModel.onBackPressed()
+        })
+    }
+
     override fun getSavedState(): EditTaskState? =
         super.getSavedState() ?: EditTaskState.loading(screenArgs.taskId)
 
@@ -68,10 +77,6 @@ class EditTaskScreen : Fragment<EditTaskState, EditTaskViewModel, EditTaskBindin
                 ).show()
             }
         }
-    }
-
-    override fun onBackPressed(): Boolean {
-        return viewModel.onBackPressed()
     }
 
     private fun closeScreen() {

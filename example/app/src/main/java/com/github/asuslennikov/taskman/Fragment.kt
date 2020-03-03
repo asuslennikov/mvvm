@@ -23,6 +23,4 @@ abstract class Fragment<STATE : State, VM : ViewModel<STATE>, B : ViewDataBindin
 
     override fun createViewModel(): VM =
         getViewModelProvider().getViewModel(this, viewModelClass)
-
-    open fun onBackPressed(): Boolean = false
 }
