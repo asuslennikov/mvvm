@@ -1,5 +1,6 @@
 package com.github.asuslennikov.taskman.task.list
 
+import android.graphics.Canvas
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.ItemTouchHelper.END
@@ -20,6 +21,7 @@ class TasksListScreen : Fragment<TasksListState, TasksListViewModel, TasksListBi
         super.onStart()
         binding.tasksListRecycler.adapter =
             TasksListAdapter(getViewModelProvider().linkWithStore(this))
+        val tasksListItemDecoration = TasksListItemDecoration()
         ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, START or END) {
             override fun getMovementFlags(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) =
                 if (viewHolder is TaskItemScreen) super.getMovementFlags(recyclerView, viewHolder) else 0
@@ -29,7 +31,16 @@ class TasksListScreen : Fragment<TasksListState, TasksListViewModel, TasksListBi
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 (viewHolder as? TaskItemScreen)?.onItemSwiped()
             }
+
+            override fun onChildDraw(
+                c: Canvas, recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder,
+                dX: Float, dY: Float, actionState: Int, isCurrentlyActive: Boolean
+            ) {
+                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+                tasksListItemDecoration.onViewTranslated(viewHolder.itemView, dX, dY)
+            }
         }).attachToRecyclerView(binding.tasksListRecycler)
+        binding.tasksListRecycler.addItemDecoration(tasksListItemDecoration)
     }
 
     override fun render(screenState: TasksListState) {

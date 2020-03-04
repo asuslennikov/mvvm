@@ -1,6 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#6200EE</color>
-    <color name="colorPrimaryDark">#3700B3</color>
-    <color name="colorAccent">#03DAC5</color>
+
+    <color name="colorPrimaryDark">#4a0072</color>
+    <color name="colorAccent">#0d47a1</color>
+
+    <color name="colorPrimary">#7b1fa2</color>
+    <color name="primaryLightColor">#ae52d4</color>
+    <color name="colorPrimaryVariant">#4a0072</color>
+    <color name="colorSecondary">#0d47a1</color>
+    <color name="secondaryLightColor">#5472d3</color>
+    <color name="colorSecondaryVariant">#002171</color>
+    <color name="colorOnPrimary">#ffffff</color>
+    <color name="colorOnSecondary">#ffffff</color>
+
+    <color name="task_item_background">@color/colorPrimaryDark</color>
+    <color name="task_item_background_stroke">#c4c4c4</color>
+
+    <color name="date_header_background">@color/primaryLightColor</color>
+    <color name="date_header_background_stroke">@color/colorPrimaryDark</color>
 </resources>

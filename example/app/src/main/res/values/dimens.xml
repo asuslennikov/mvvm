@@ -19,6 +19,13 @@
     <dimen name="one_and_half_margin">24dp</dimen>
     <dimen name="double_margin">32dp</dimen>
 
+    <dimen name="task_item_background_corner">24dp</dimen>
+    <dimen name="task_item_background_stroke_width">2dp</dimen>
+    <dimen name="date_header_background_corner">@dimen/task_item_background_corner</dimen>
+    <dimen name="date_header_background_stroke_width">@dimen/task_item_background_stroke_width</dimen>
+
+    <dimen name="tasks_list_date_header_top_separation">16dp</dimen>
+
     <dimen name="task_card_icon_size">60dp</dimen>
 
     <dimen name="edit_task_icon_size">@dimen/task_card_icon_size</dimen>

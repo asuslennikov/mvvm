@@ -20,10 +20,11 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:background="@drawable/tasks_list_task_item_background"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="@{() -> viewModel.onTaskClick(screen)}"
-        android:padding="@dimen/half_normal_padding"
+        android:padding="@dimen/normal_padding"
         bind:onLongClick="@{()-> viewModel.onTaskLongClick(screen)}">
 
         <TextView
