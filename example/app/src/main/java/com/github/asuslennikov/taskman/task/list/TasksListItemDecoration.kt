@@ -6,31 +6,20 @@ import android.graphics.Rect
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.ColorUtils
-import androidx.core.graphics.alpha
 import androidx.recyclerview.widget.RecyclerView
 import com.github.asuslennikov.taskman.R
 import com.github.asuslennikov.taskman.task.list.item.DateHeaderScreen
 import com.github.asuslennikov.taskman.task.list.item.TaskItemScreen
-import java.lang.ref.WeakReference
 
-interface ItemDecorationTranslateListener {
-    fun onViewTranslated(view: View, deltaX: Float, deltaY: Float)
-
-}
-
-class TasksListItemDecoration : RecyclerView.ItemDecoration(), ItemDecorationTranslateListener {
+class TasksListItemDecoration : RecyclerView.ItemDecoration() {
 
     private companion object {
         const val NOT_DEFINED = 0
         const val COLOR_ALPHA_MULTIPLIER = 255
+        const val FLOAT_TO_INT_PIXEL_GAP_FIX = 1
     }
 
     private val paint = Paint()
-    private val draggingViewOffset = object {
-        var view: WeakReference<View>? = null
-        var deltaX: Int = 0
-        var deltaY: Int = 0
-    }
     private var backgroundMainColor: Int = NOT_DEFINED
     private var backgroundCorner: Int = NOT_DEFINED
     private var backgroundStrokeWidth: Int = NOT_DEFINED
@@ -48,13 +37,13 @@ class TasksListItemDecoration : RecyclerView.ItemDecoration(), ItemDecorationTra
         super.onDraw(c, parent, state)
         setFromResourcesIfNeeded(parent)
         parent.layoutManager?.let { layoutManager ->
-            for (idx in 0 until layoutManager.childCount) {
+            for (idx in 0 until layoutManager.childCount - 1) {
                 layoutManager.getChildAt(idx)?.let child@{ currentChild ->
-                    if (!isChildViewATaskItem(parent, currentChild)) {
+                    if (!isChildViewVisible(layoutManager, currentChild)) {
                         return@child
                     }
-                    layoutManager.getChildAt(idx)?.let { nextChild ->
-                        if (isChildViewATaskItem(parent, nextChild) && isChildViewVisible(layoutManager, currentChild)) {
+                    layoutManager.getChildAt(idx + 1)?.let { nextChild ->
+                        if (isChildViewATaskItem(parent, nextChild)) {
                             drawTaskItemBackground(c, parent, nextChild)
                         }
                     }
@@ -83,32 +72,23 @@ class TasksListItemDecoration : RecyclerView.ItemDecoration(), ItemDecorationTra
                 || layoutManager.isViewPartiallyVisible(view, false, true)
 
     private fun drawTaskItemBackground(c: Canvas, parent: RecyclerView, view: View) {
-        val deltaX = if (draggingViewOffset.view?.get() == view) draggingViewOffset.deltaX else 0
-        val deltaY = if (draggingViewOffset.view?.get() == view) draggingViewOffset.deltaY else 0
         c.run {
             save()
             paint.color = ColorUtils.setAlphaComponent(backgroundMainColor, (COLOR_ALPHA_MULTIPLIER * view.alpha).toInt())
-            val itemRect = Rect(
-                view.left,
-                view.top - backgroundCorner,
-                view.right,
-                view.top
-            )
-            clipRect(itemRect)
-            itemRect.left += backgroundStrokeWidth + deltaX
-            itemRect.top += deltaY
-            itemRect.right += deltaX
-            itemRect.bottom += deltaY
-            drawRect(itemRect, paint)
+            with(parent) {
+                clipRect(Rect(paddingLeft, paddingTop, c.clipBounds.right - paddingRight, c.clipBounds.bottom - paddingBottom))
+            }
+            with(view) {
+                Rect(
+                    left + translationX.toInt() + backgroundStrokeWidth,
+                    top + translationY.toInt() - backgroundCorner,
+                    right + translationX.toInt(),
+                    top + translationY.toInt() + FLOAT_TO_INT_PIXEL_GAP_FIX
+                )
+            }.apply {
+                drawRect(this, paint)
+            }
             restore()
         }
-    }
-
-    override fun onViewTranslated(view: View, deltaX: Float, deltaY: Float) {
-        if (draggingViewOffset.view?.get() != view) {
-            draggingViewOffset.view = WeakReference(view)
-        }
-        draggingViewOffset.deltaX = deltaX.toInt()
-        draggingViewOffset.deltaY = deltaY.toInt()
     }
 }
