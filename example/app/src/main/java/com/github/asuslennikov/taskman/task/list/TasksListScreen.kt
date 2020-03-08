@@ -1,6 +1,5 @@
 package com.github.asuslennikov.taskman.task.list
 
-import android.graphics.Canvas
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.ItemTouchHelper.END

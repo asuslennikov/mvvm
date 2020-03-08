@@ -16,7 +16,7 @@ class TasksListItemDecoration : RecyclerView.ItemDecoration() {
     private companion object {
         const val NOT_DEFINED = 0
         const val COLOR_ALPHA_MULTIPLIER = 255
-        const val FLOAT_TO_INT_PIXEL_GAP_FIX = 1
+        const val FLOAT_TO_INT_PIXEL_GAP_FIX = 0.5
     }
 
     private val paint = Paint()
@@ -36,17 +36,10 @@ class TasksListItemDecoration : RecyclerView.ItemDecoration() {
     override fun onDraw(c: Canvas, parent: RecyclerView, state: RecyclerView.State) {
         super.onDraw(c, parent, state)
         setFromResourcesIfNeeded(parent)
-        parent.layoutManager?.let { layoutManager ->
-            for (idx in 0 until layoutManager.childCount - 1) {
-                layoutManager.getChildAt(idx)?.let child@{ currentChild ->
-                    if (!isChildViewVisible(layoutManager, currentChild)) {
-                        return@child
-                    }
-                    layoutManager.getChildAt(idx + 1)?.let { nextChild ->
-                        if (isChildViewATaskItem(parent, nextChild)) {
-                            drawTaskItemBackground(c, parent, nextChild)
-                        }
-                    }
+        for (idx in 0..parent.childCount) {
+            parent.getChildAt(idx)?.let { childView ->
+                if (isChildViewATaskItem(parent, childView)) {
+                    drawTaskItemBackground(c, parent, childView)
                 }
             }
         }
@@ -67,10 +60,6 @@ class TasksListItemDecoration : RecyclerView.ItemDecoration() {
     private fun isChildViewATaskItem(parent: RecyclerView, view: View?) =
         view?.run { parent.getChildViewHolder(this) is TaskItemScreen } ?: false
 
-    private fun isChildViewVisible(layoutManager: RecyclerView.LayoutManager, view: View) =
-        layoutManager.isViewPartiallyVisible(view, true, true)
-                || layoutManager.isViewPartiallyVisible(view, false, true)
-
     private fun drawTaskItemBackground(c: Canvas, parent: RecyclerView, view: View) {
         c.run {
             save()
@@ -83,7 +72,7 @@ class TasksListItemDecoration : RecyclerView.ItemDecoration() {
                     left + translationX.toInt() + backgroundStrokeWidth,
                     top + translationY.toInt() - backgroundCorner,
                     right + translationX.toInt(),
-                    top + translationY.toInt() + FLOAT_TO_INT_PIXEL_GAP_FIX
+                    top + (translationY + FLOAT_TO_INT_PIXEL_GAP_FIX).toInt()
                 )
             }.apply {
                 drawRect(this, paint)
