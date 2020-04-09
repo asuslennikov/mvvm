@@ -33,7 +33,7 @@ class AddTaskScreen : Fragment<AddTaskState, AddTaskViewModel, AddTaskBinding>(
                     ScreenAnimationUtils.AnimationData(
                         binding.addTaskSaveButton,
                         view,
-                        R.color.colorAccent,
+                        R.color.raw_color_yellow_light,
                         android.R.color.background_light,
                         view.context.resources.getInteger(R.integer.common_circular_reveal_animation_duration).toLong()
                     )
@@ -99,7 +99,7 @@ class AddTaskScreen : Fragment<AddTaskState, AddTaskViewModel, AddTaskBinding>(
                 ScreenAnimationUtils.AnimationData(
                     binding.addTaskSaveButton,
                     this,
-                    R.color.colorAccent,
+                    R.color.raw_color_yellow_light,
                     android.R.color.background_light,
                     context.resources.getInteger(R.integer.common_circular_reveal_animation_duration).toLong(),
                     true

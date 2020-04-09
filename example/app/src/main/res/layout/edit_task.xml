@@ -144,7 +144,7 @@
             android:layout_marginEnd="@dimen/normal_margin"
             android:onClick="@{() -> viewModel.onDateClicked()}"
             android:text="@{state.formattedDate}"
-            android:textColor="@color/colorAccent"
+            android:textColor="@color/raw_color_yellow_light"
             android:visibility="@{state.completed}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/edit_task_date_label"

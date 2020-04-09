@@ -17,15 +17,19 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/tasks_list_surface"
         android:orientation="vertical">
 
         <TextView
             android:id="@+id/task_list_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/normal_margin"
+            android:background="@color/tasks_list_toolbar_surface"
+            android:padding="@dimen/normal_padding"
             android:text="@string/tasks_list_title"
+            android:textColor="@color/tasks_list_toolbar_color"
             android:textSize="@dimen/header_text_size"
+            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -33,12 +37,8 @@
             android:id="@+id/tasks_list_recycler"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:background="#c4c4c4"
             android:orientation="vertical"
-            android:paddingStart="@dimen/half_normal_padding"
             android:paddingTop="@dimen/half_normal_padding"
-            android:paddingEnd="0dp"
-            android:paddingBottom="@dimen/half_normal_padding"
             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

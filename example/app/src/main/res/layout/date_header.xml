@@ -17,17 +17,20 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/date_header_surface_left_margin"
+        android:layout_marginTop="@dimen/three_quoter_normal_margin"
+        android:layout_marginBottom="@dimen/three_quoter_normal_margin"
         android:background="@drawable/tasks_list_date_header_background"
-        android:padding="@dimen/normal_margin">
+        android:elevation="@dimen/elevation_1"
+        android:padding="@dimen/half_normal_padding">
 
         <TextView
             android:id="@+id/date_header_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="end"
             android:text="@{state.date}"
+            android:textColor="@color/date_header_text"
             android:textSize="@dimen/normal_text_size"
-            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

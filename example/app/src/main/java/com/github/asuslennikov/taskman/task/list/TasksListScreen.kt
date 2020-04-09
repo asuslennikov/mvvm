@@ -30,7 +30,6 @@ class TasksListScreen : Fragment<TasksListState, TasksListViewModel, TasksListBi
                 (viewHolder as? TaskItemScreen)?.onItemSwiped()
             }
         }).attachToRecyclerView(binding.tasksListRecycler)
-        binding.tasksListRecycler.addItemDecoration(TasksListItemDecoration())
     }
 
     override fun render(screenState: TasksListState) {

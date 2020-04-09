@@ -32,7 +32,7 @@ class EditTaskScreen : Fragment<EditTaskState, EditTaskViewModel, EditTaskBindin
                     ScreenAnimationUtils.AnimationData(
                         binding.editTaskSaveButton,
                         view,
-                        R.color.colorAccent,
+                        R.color.raw_color_yellow_light,
                         android.R.color.background_light,
                         view.context.resources.getInteger(R.integer.common_circular_reveal_animation_duration).toLong()
                     )
@@ -85,7 +85,7 @@ class EditTaskScreen : Fragment<EditTaskState, EditTaskViewModel, EditTaskBindin
                 ScreenAnimationUtils.AnimationData(
                     binding.editTaskSaveButton,
                     this,
-                    R.color.colorAccent,
+                    R.color.raw_color_yellow_light,
                     android.R.color.background_light,
                     context.resources.getInteger(R.integer.common_circular_reveal_animation_duration).toLong(),
                     true

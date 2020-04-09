@@ -2,7 +2,7 @@
 
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
-    <solid android:color="@color/task_item_surface" />
+    <solid android:color="@color/task_item_completed_surface" />
     <corners
         android:bottomRightRadius="@dimen/task_item_surface_corner"
         android:topRightRadius="@dimen/task_item_surface_corner" />

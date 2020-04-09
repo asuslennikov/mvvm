@@ -14,15 +14,19 @@
     <dimen name="one_and_half_padding">24dp</dimen>
     <dimen name="double_padding">32dp</dimen>
 
+    <dimen name="quoter_normal_margin">4dp</dimen>
     <dimen name="half_normal_margin">8dp</dimen>
+    <dimen name="three_quoter_normal_margin">12dp</dimen>
     <dimen name="normal_margin">16dp</dimen>
     <dimen name="one_and_half_margin">24dp</dimen>
     <dimen name="double_margin">32dp</dimen>
 
-    <dimen name="task_item_background_corner">24dp</dimen>
-    <dimen name="task_item_background_stroke_width">2dp</dimen>
-    <dimen name="date_header_background_corner">@dimen/task_item_background_corner</dimen>
-    <dimen name="date_header_background_stroke_width">@dimen/task_item_background_stroke_width</dimen>
+    <dimen name="elevation_1">4dp</dimen>
+
+    <dimen name="task_item_surface_corner">8dp</dimen>
+    <dimen name="task_item_surface_right_margin">@dimen/normal_margin</dimen>
+    <dimen name="date_header_surface_corner">@dimen/task_item_surface_corner</dimen>
+    <dimen name="date_header_surface_left_margin">@dimen/normal_margin</dimen>
 
     <dimen name="tasks_list_date_header_top_separation">16dp</dimen>
 

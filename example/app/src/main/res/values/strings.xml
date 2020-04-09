@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">TaskMan</string>
-    <string name="splash_application_name">@string/app_name</string>
-    <string name="tasks_list_title">Task list</string>
+    <string name="splash_text">Loading</string>
+    <string name="tasks_list_title">Tasks</string>
     <string name="tasks_list_today_header">Today</string>
     <string name="tasks_list_yesterday_header">Yesterday</string>
     <string name="tasks_list_any_day_header_format">dd-MM-yyyy</string>

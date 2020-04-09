@@ -20,11 +20,17 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:background="@drawable/tasks_list_task_item_background"
+        android:id="@+id/task_item_root"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/quoter_normal_margin"
+        android:layout_marginEnd="@dimen/task_item_surface_right_margin"
+        android:layout_marginBottom="@dimen/quoter_normal_margin"
+        android:background="@drawable/tasks_list_task_item_background"
+        android:elevation="@dimen/elevation_1"
         android:onClick="@{() -> viewModel.onTaskClick(screen)}"
-        android:padding="@dimen/normal_padding"
+        android:padding="@dimen/half_normal_padding"
+        android:paddingStart="@dimen/one_and_half_padding"
         bind:onLongClick="@{()-> viewModel.onTaskLongClick(screen)}">
 
         <TextView
@@ -32,7 +38,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@{state.title}"
+            android:textColor="@color/task_item_text"
             android:textSize="@dimen/normal_text_size"
+            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
